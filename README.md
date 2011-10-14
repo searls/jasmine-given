@@ -34,7 +34,7 @@ describe "assigning stuff to variables", ->
   Then -> expect(subject.length).toBe(1)
 ```
 
-As you might infer from the above, `Then` will trigger a spec failure when the function passed to it returns `false`. As shown above, traditional expectations can still be used, but this can make for significantly easier-to-read expectations when you're asserting something as simple as equality.
+As you might infer from the above, `Then` will trigger a spec failure when the function passed to it returns `false`. As shown above, traditional expectations can still be used, but using simple booleans can make for significantly easier-to-read expectations when you're asserting something as obvious as equality.
 
 ## Example (JavaScript)
 
