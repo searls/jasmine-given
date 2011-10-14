@@ -1,18 +1,20 @@
-context = describe
-
-describe "jasmine-given", ->
+describe "jasmine-given api", ->
   describe "assigning stuff to this", ->
     Given -> @number = 24
     When -> @number *= 2
+    Then -> @number == 48
     Then -> expect(@number).toBe(48)
 
-  describe "assigning vars", ->
+  describe "assigning stuff to variables", ->
     subject=null
     Given -> subject = []
     When -> subject.push('foo')
-    Then -> expect(subject.length).toBe(1)
     Then -> subject.length == 1
+    Then -> expect(subject.length).toBe(1)
 
+
+
+describe "jasmine-given implementation", ->
   describe "returning boolean values from Then", ->
     passed=null
     beforeEach ->
