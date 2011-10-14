@@ -4,9 +4,17 @@ jasmine-given is a [Jasmine](https://github.com/pivotal/jasmine) helper that enc
 
 **[Download the latest version here](https://github.com/searls/jasmine-given/archives/master)**.
 
+The basic idea behind the "*-given" meme is a humble acknowledgement of given-when-then as the best English language analogue we have to arrange-act-assert. With rspec and jasmine, we often approximate "given-when-then" with "let-beforeEach-it" (noting that jasmine lacks `let`).
+
+The big idea is "why approximate given-when-then, when we could actually just use them?"
+
+The small idea is "if we couldn't write so English along with our `it` blocks then we'd be encouraged to write cleaner, clearer matchers to articulate our expectations."
+
+Both ideas are pretty cool. Thanks, Jim!
+
 ## Example (CoffeeScript)
 
-jasmine-given looks *much* nicer in CoffeeScript, so I'll show that example:
+Oh, and jasmine-given looks *much* nicer in CoffeeScript, so I'll show that example:
 
 ``` coffeescript
 
