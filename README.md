@@ -8,13 +8,13 @@ The basic idea behind the "*-given" meme is a humble acknowledgement of given-wh
 
 The big idea is "why approximate given-when-then, when we could actually just use them?"
 
-The small idea is "if we couldn't write so English along with our `it` blocks then we'd be encouraged to write cleaner, clearer matchers to articulate our expectations."
+The small idea is "if we couldn't write English along with our `it` blocks then we'd be encouraged to write cleaner, clearer matchers to articulate our expectations."
 
 Both ideas are pretty cool. Thanks, Jim!
 
 ## Example (CoffeeScript)
 
-Oh, and jasmine-given looks *much* nicer in CoffeeScript, so I'll show that example:
+Oh, and jasmine-given looks *much* nicer in CoffeeScript, so I'll show that example first:
 
 ``` coffeescript
 
@@ -45,6 +45,7 @@ describe("assigning stuff to this", function() {
   Given(function() { this.number = 24; });
   When(function() { this.number *= 2; });
   Then(function() { return this.number === 48; });
+  // -or- 
   Then(function() { expect(this.number).toBe(48) });
 });
 
@@ -53,6 +54,7 @@ describe("assigning stuff to variables", function() {
   Given(function() { subject = []; });
   When(function() { subject.push('foo'); });
   Then(function() { return subject.length === 1; });
+  // -or-
   Then(function() { expect(subject.length).toBe(1); });
 });
 ```
