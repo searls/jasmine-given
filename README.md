@@ -78,7 +78,7 @@ describe "eliminating redundant test execution", ->
 ```
 Because there are four `Then` statements, the `Given` and `When` are each executed four times. That's because it would be unreasonable for Jasmine to expect each `it` function  to be idempotent.
 
-However, spec authors can make leverage idempotence safely when we're writing in a given-when-then format. You opt-in with jasmine-given by chaining `Then` blocks, as shown below:
+However, spec authors can leverage idempotence safely when writing in a given-when-then format. You opt-in with jasmine-given by chaining `Then` blocks, as shown below:
 
 ``` coffeescript
   context "chaining Then statements", ->
