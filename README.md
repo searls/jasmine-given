@@ -45,7 +45,7 @@ describe("assigning stuff to this", function() {
   Given(function() { this.number = 24; });
   When(function() { this.number *= 2; });
   Then(function() { return this.number === 48; });
-  // -or- 
+  // -or-
   Then(function() { expect(this.number).toBe(48) });
 });
 
@@ -61,7 +61,7 @@ describe("assigning stuff to variables", function() {
 
 ## Supporting Idempotent "Then" statements
 
-Chatting with Jim earlier this week, he pointed out that `Then` blocks should be idempotent, and not have any affect on the state of the subject being specified. As a result, one optimization that rspec-given could make is to execute **n** `Then` expectations without executing each `Then`'s depended-on `Given` and `When` blocks **n** times.
+Jim mentioned to me that `Then` blocks ought to be idempotent (that is, since they're assertions they should not have any affect on the state of the subject being specified). As a result, one optimization that rspec-given might make would be to execute **n** `Then` expectations without executing each `Then`'s depended-on `Given` and `When` blocks **n** times.
 
 Take this example from jasmine-given's spec:
 
@@ -76,10 +76,9 @@ describe "eliminating redundant test execution", ->
     Then -> timesGivenWasInvoked == 3
     Then -> timesWhenWasInvoked == 4
 ```
+Because there are four `Then` statements, the `Given` and `When` are each executed four times. That's because it would be unreasonable for Jasmine to expect each `it` function  to be idempotent.
 
-In the above example, because there are four `Then` statements, the `Given` and `When` are executed four times. That's because it would be unreasonable for Jasmine to expect that each `it` function written in Jasmine is going to be idempotent.
-
-However, we can make that assumption safely when we're writing in a given-when-then format, especially when it's opt-in:
+However, spec authors can make leverage idempotence safely when we're writing in a given-when-then format. You opt-in with jasmine-given by chaining `Then` blocks, as shown below:
 
 ``` coffeescript
   context "chaining Then statements", ->
@@ -92,13 +91,13 @@ However, we can make that assumption safely when we're writing in a given-when-t
     .Then(-> timesWhenWasInvoked == 1)
 ```
 
-In this example, `Given` and `When` are only invoked one time each, and the magic that made it possible was to chain `Then` with subsequent `Then` statements. jasmine-given then rolls all of those up into a single `it` in Jasmine.
+In this example, `Given` and `When` are only invoked one time each, because jasmine-given rolled all of those `Then` statements up into a single `it` in Jasmine.
 
-Leveraging this feature is likely to have the effect of speeding up your specs, especially if you're specs are otherwise slow (integration specs or DOM-heavy).
+Leveraging this feature is likely to have the effect of speeding up your specs, especially if your specs are otherwise slow (integration specs or DOM-heavy).
 
-[Note that in the above, each `Then` needed to be wrapped in parentheses in order for CoffeeScript to understand that we were chaining invocations.]
+[Note that in the above, each `Then` needed to be wrapped in parentheses in order for CoffeeScript to understand that we were chaining invocations. If there's a cleaner way to do this in CoffeeScript, please [let me know](https://github.com/searls/jasmine-given/issues/new)]
 
-The above spec is also provided in JavaScript:
+The above spec can also be expressed in JavaScript:
 
 ``` javascript
 
