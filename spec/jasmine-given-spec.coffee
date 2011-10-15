@@ -1,4 +1,4 @@
-describe "jasmine-given api", ->
+describe "jasmine-given CoffeeScript API", ->
   describe "assigning stuff to this", ->
     Given -> @number = 24
     When -> @number *= 2
@@ -12,7 +12,24 @@ describe "jasmine-given api", ->
     Then -> subject.length == 1
     Then -> expect(subject.length).toBe(1)
 
+  describe "eliminating redundant test execution", ->
+    context "a traditional spec with numerous Then statements", ->
+      timesGivenWasInvoked = timesWhenWasInvoked = 0
+      Given -> timesGivenWasInvoked++
+      When -> timesWhenWasInvoked++
+      Then -> timesGivenWasInvoked == 1
+      Then -> timesWhenWasInvoked == 2
+      Then -> timesGivenWasInvoked == 3
+      Then -> timesWhenWasInvoked == 4
 
+    context "chaining Then statements", ->
+      timesGivenWasInvoked = timesWhenWasInvoked = 0
+      Given -> timesGivenWasInvoked++
+      When -> timesWhenWasInvoked++
+      Then(-> timesGivenWasInvoked == 1)
+      .Then(-> timesWhenWasInvoked == 1)
+      .Then(-> timesGivenWasInvoked == 1)
+      .Then(-> timesWhenWasInvoked == 1)
 
 describe "jasmine-given implementation", ->
   describe "returning boolean values from Then", ->

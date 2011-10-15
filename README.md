@@ -56,3 +56,72 @@ describe("assigning stuff to variables", function() {
   Then(function() { expect(subject.length).toBe(1); });
 });
 ```
+
+## Supporting Idempotent "Then" statements
+
+Chatting with Jim earlier this week, he pointed out that `Then` blocks should be idempotent, and not have any affect on the state of the subject being specified. As a result, one optimization that rspec-given could make is to execute **n** `Then` expectations without executing each `Then`'s depended-on `Given` and `When` blocks **n** times.
+
+Take this example from jasmine-given's spec:
+
+``` coffeescript
+describe "eliminating redundant test execution", ->
+  context "a traditional spec with numerous Then statements", ->
+    timesGivenWasInvoked = timesWhenWasInvoked = 0
+    Given -> timesGivenWasInvoked++
+    When -> timesWhenWasInvoked++
+    Then -> timesGivenWasInvoked == 1
+    Then -> timesWhenWasInvoked == 2
+    Then -> timesGivenWasInvoked == 3
+    Then -> timesWhenWasInvoked == 4
+```
+
+In the above example, because there are four `Then` statements, the `Given` and `When` are executed four times. That's because it would be unreasonable for Jasmine to expect that each `it` function written in Jasmine is going to be idempotent.
+
+However, we can make that assumption safely when we're writing in a given-when-then format, especially when it's opt-in:
+
+``` coffeescript
+  context "chaining Then statements", ->
+    timesGivenWasInvoked = timesWhenWasInvoked = 0
+    Given -> timesGivenWasInvoked++
+    When -> timesWhenWasInvoked++
+    Then(-> timesGivenWasInvoked == 1)
+    .Then(-> timesWhenWasInvoked == 1)
+    .Then(-> timesGivenWasInvoked == 1)
+    .Then(-> timesWhenWasInvoked == 1)
+```
+
+In this example, `Given` and `When` are only invoked one time each, and the magic that made it possible was to chain `Then` with subsequent `Then` statements. jasmine-given then rolls all of those up into a single `it` in Jasmine.
+
+Leveraging this feature is likely to have the effect of speeding up your specs, especially if you're specs are otherwise slow (integration specs or DOM-heavy).
+
+[Note that in the above, each `Then` needed to be wrapped in parentheses in order for CoffeeScript to understand that we were chaining invocations.]
+
+The above spec is also provided in JavaScript:
+
+``` javascript
+
+describe("eliminating redundant test execution", function() {
+  context("a traditional spec with numerous Then statements", function() {
+    var timesGivenWasInvoked = 0,
+        timesWhenWasInvoked = 0;
+    Given(function() { timesGivenWasInvoked++; });
+    When(function() { timesWhenWasInvoked++; });
+    Then(function() { return timesGivenWasInvoked == 1; });
+    Then(function() { return timesWhenWasInvoked == 2; });
+    Then(function() { return timesGivenWasInvoked == 3; });
+    Then(function() { return timesWhenWasInvoked == 4; });
+  });
+
+  context("chaining Then statements", function() {
+    var timesGivenWasInvoked = 0,
+        timesWhenWasInvoked = 0;
+    Given(function() { timesGivenWasInvoked++; });
+    When(function() { timesWhenWasInvoked++; });
+    Then(function() { return timesGivenWasInvoked == 1; })
+    .Then(function() { return timesWhenWasInvoked == 1; })
+    .Then(function() { return timesGivenWasInvoked == 1; })
+    .Then(function() { return timesWhenWasInvoked == 1; })
+  });
+});
+
+```
