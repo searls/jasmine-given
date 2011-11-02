@@ -1,9 +1,10 @@
 describe("jasmine-given JavaScript API", function() {
   describe("assigning stuff to this", function() {
     Given(function() { this.number = 24; });
+    And(function() { this.number++; });
     When(function() { this.number *= 2; });
-    Then(function() { return this.number === 48; });
-    Then(function() { expect(this.number).toBe(48) });
+    Then(function() { return this.number === 50; });
+    And(function() { expect(this.number).toBe(50) });
   });
 
   describe("assigning stuff to variables", function() {
@@ -11,7 +12,7 @@ describe("jasmine-given JavaScript API", function() {
     Given(function() { subject = []; });
     When(function() { subject.push('foo'); });
     Then(function() { return subject.length === 1; });
-    Then(function() { expect(subject.length).toBe(1); });
+    And(function() { expect(subject.length).toBe(1); });
   });
 
   describe("eliminating redundant test execution", function() {
@@ -21,9 +22,9 @@ describe("jasmine-given JavaScript API", function() {
       Given(function() { timesGivenWasInvoked++; });
       When(function() { timesWhenWasInvoked++; });
       Then(function() { return timesGivenWasInvoked == 1; });
-      Then(function() { return timesWhenWasInvoked == 2; });
-      Then(function() { return timesGivenWasInvoked == 3; });
-      Then(function() { return timesWhenWasInvoked == 4; });
+      And(function() { return timesWhenWasInvoked == 2; });
+      And(function() { return timesGivenWasInvoked == 3; });
+      And(function() { return timesWhenWasInvoked == 4; });
     });
 
     context("chaining Then statements", function() {
@@ -32,9 +33,9 @@ describe("jasmine-given JavaScript API", function() {
       Given(function() { timesGivenWasInvoked++; });
       When(function() { timesWhenWasInvoked++; });
       Then(function() { return timesGivenWasInvoked == 1; })
-      .Then(function() { return timesWhenWasInvoked == 1; })
-      .Then(function() { return timesGivenWasInvoked == 1; })
-      .Then(function() { return timesWhenWasInvoked == 1; })
+      .And(function() { return timesWhenWasInvoked == 1; })
+      .And(function() { return timesGivenWasInvoked == 1; })
+      .And(function() { return timesWhenWasInvoked == 1; })
     });
   });
 

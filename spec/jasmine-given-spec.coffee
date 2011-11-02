@@ -1,9 +1,10 @@
 describe "jasmine-given CoffeeScript API", ->
   describe "assigning stuff to this", ->
     Given -> @number = 24
+    And -> @number++
     When -> @number *= 2
-    Then -> @number == 48
-    And -> expect(@number).toBe(48)
+    Then -> @number == 50
+    And -> expect(@number).toBe(50)
 
   describe "assigning stuff to variables", ->
     subject=null
