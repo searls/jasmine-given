@@ -4,7 +4,8 @@ describe("jasmine-given JavaScript API", function() {
     And(function() { this.number++; });
     When(function() { this.number *= 2; });
     Then(function() { return this.number === 50; });
-    And(function() { expect(this.number).toBe(50) });
+    // or
+    Then(function() { expect(this.number).toBe(50) });
   });
 
   describe("assigning stuff to variables", function() {
@@ -12,7 +13,8 @@ describe("jasmine-given JavaScript API", function() {
     Given(function() { subject = []; });
     When(function() { subject.push('foo'); });
     Then(function() { return subject.length === 1; });
-    And(function() { expect(subject.length).toBe(1); });
+    // or
+    Then(function() { expect(subject.length).toBe(1); });
   });
 
   describe("eliminating redundant test execution", function() {

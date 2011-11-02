@@ -4,14 +4,16 @@ describe "jasmine-given CoffeeScript API", ->
     And -> @number++
     When -> @number *= 2
     Then -> @number == 50
-    And -> expect(@number).toBe(50)
+    # or
+    Then -> expect(@number).toBe(50)
 
   describe "assigning stuff to variables", ->
     subject=null
     Given -> subject = []
     When -> subject.push('foo')
     Then -> subject.length == 1
-    And -> expect(subject.length).toBe(1)
+    # or
+    Then -> expect(subject.length).toBe(1)
 
   describe "eliminating redundant test execution", ->
     context "a traditional spec with numerous Then statements", ->

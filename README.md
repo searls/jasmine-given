@@ -17,20 +17,20 @@ Both ideas are pretty cool. Thanks, Jim!
 Oh, and jasmine-given looks *much* nicer in CoffeeScript, so I'll show that example first:
 
 ``` coffeescript
-
 describe "assigning stuff to this", ->
   Given -> @number = 24
+  And -> @number++
   When -> @number *= 2
-  Then -> @number == 48
-  # -or-
-  Then -> expect(@number).toBe(48)
+  Then -> @number == 50
+  # or
+  Then -> expect(@number).toBe(50)
 
 describe "assigning stuff to variables", ->
   subject=null
   Given -> subject = []
   When -> subject.push('foo')
   Then -> subject.length == 1
-  # -or-
+  # or
   Then -> expect(subject.length).toBe(1)
 ```
 
@@ -43,10 +43,11 @@ Of course, jasmine-given also works fine in JavaScript; but as you can see, it's
 ``` javascript
 describe("assigning stuff to this", function() {
   Given(function() { this.number = 24; });
+  And(function() { this.number++; });
   When(function() { this.number *= 2; });
-  Then(function() { return this.number === 48; });
-  // -or-
-  Then(function() { expect(this.number).toBe(48) });
+  Then(function() { return this.number === 50; });
+  // or
+  Then(function() { expect(this.number).toBe(50) });
 });
 
 describe("assigning stuff to variables", function() {
@@ -54,7 +55,7 @@ describe("assigning stuff to variables", function() {
   Given(function() { subject = []; });
   When(function() { subject.push('foo'); });
   Then(function() { return subject.length === 1; });
-  // -or-
+  // or
   Then(function() { expect(subject.length).toBe(1); });
 });
 ```
@@ -72,9 +73,9 @@ describe "eliminating redundant test execution", ->
     Given -> timesGivenWasInvoked++
     When -> timesWhenWasInvoked++
     Then -> timesGivenWasInvoked == 1
-    Then -> timesWhenWasInvoked == 2
-    Then -> timesGivenWasInvoked == 3
-    Then -> timesWhenWasInvoked == 4
+    And -> timesWhenWasInvoked == 2
+    And -> timesGivenWasInvoked == 3
+    And -> timesWhenWasInvoked == 4
 ```
 Because there are four `Then` statements, the `Given` and `When` are each executed four times. That's because it would be unreasonable for Jasmine to expect each `it` function  to be idempotent.
 
@@ -86,9 +87,10 @@ However, spec authors can leverage idempotence safely when writing in a given-wh
     Given -> timesGivenWasInvoked++
     When -> timesWhenWasInvoked++
     Then(-> timesGivenWasInvoked == 1)
-    .Then(-> timesWhenWasInvoked == 1)
-    .Then(-> timesGivenWasInvoked == 1)
-    .Then(-> timesWhenWasInvoked == 1)
+    .And(-> timesWhenWasInvoked == 1)
+    .And(-> timesGivenWasInvoked == 1)
+    .And(-> timesWhenWasInvoked == 1)
+    And -> timesWhenWasInvoked == 2
 ```
 
 In this example, `Given` and `When` are only invoked one time each, because jasmine-given rolled all of those `Then` statements up into a single `it` in Jasmine.
@@ -101,16 +103,16 @@ The above spec can also be expressed in JavaScript:
 
 ``` javascript
 
-describe("eliminating redundant test execution", function() {
+ddescribe("eliminating redundant test execution", function() {
   context("a traditional spec with numerous Then statements", function() {
     var timesGivenWasInvoked = 0,
         timesWhenWasInvoked = 0;
     Given(function() { timesGivenWasInvoked++; });
     When(function() { timesWhenWasInvoked++; });
     Then(function() { return timesGivenWasInvoked == 1; });
-    Then(function() { return timesWhenWasInvoked == 2; });
-    Then(function() { return timesGivenWasInvoked == 3; });
-    Then(function() { return timesWhenWasInvoked == 4; });
+    And(function() { return timesWhenWasInvoked == 2; });
+    And(function() { return timesGivenWasInvoked == 3; });
+    And(function() { return timesWhenWasInvoked == 4; });
   });
 
   context("chaining Then statements", function() {
@@ -119,9 +121,9 @@ describe("eliminating redundant test execution", function() {
     Given(function() { timesGivenWasInvoked++; });
     When(function() { timesWhenWasInvoked++; });
     Then(function() { return timesGivenWasInvoked == 1; })
-    .Then(function() { return timesWhenWasInvoked == 1; })
-    .Then(function() { return timesGivenWasInvoked == 1; })
-    .Then(function() { return timesWhenWasInvoked == 1; })
+    .And(function() { return timesWhenWasInvoked == 1; })
+    .And(function() { return timesGivenWasInvoked == 1; })
+    .And(function() { return timesWhenWasInvoked == 1; })
   });
 });
 
