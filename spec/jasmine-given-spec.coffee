@@ -50,21 +50,22 @@ describe "jasmine-given CoffeeScript API", ->
 
 describe "jasmine-given implementation", ->
   describe "returning boolean values from Then", ->
-    passed=null
-    beforeEach ->
-      this.addMatchers
-        toHaveReturnedFalseFromThen: ->
-          passed = !this.actual
-          false
+    describe "Then()'s responsibility", ->
+      passed=null
+      beforeEach ->
+        this.addMatchers
+          toHaveReturnedFalseFromThen: ->
+            passed = !this.actual.call()
+            false
 
-    context "a true is returned", ->
-      Then -> 1 + 1 == 2
-      it "passed", ->
-        expect(passed).toBe(false)
+      context "a true is returned", ->
+        Then -> 1 + 1 == 2
+        it "passed", ->
+          expect(passed).toBe(false)
 
-    context "a false is returned", ->
-      Then -> 1 + 1 == 3
-      it "failed", ->
-        expect(passed).toBe(true)
+      context "a false is returned", ->
+        Then -> 1 + 1 == 3
+        it "failed", ->
+          expect(passed).toBe(true)
 
 
