@@ -48,14 +48,28 @@ describe "jasmine-given CoffeeScript API", ->
       And -> @meat != 'hammuffin'
 
 
+  describe "giving Given a variable", ->
+    context "add a variable to `this`", ->
+      Given "pizza", -> 5
+      Then -> @pizza == 5
+
+    context "a variable of that name already exists on `this`", ->
+      Given -> @muffin = 1
+      Given -> spyOn(window, "beforeEach").andCallFake (f) -> f()
+      Then -> expect(-> Given "muffin", -> 2).toThrow(
+        "Unfortunately, the variable 'muffin' is already assigned to: 1")
+
+    context "a subsequent unrelated test run", ->
+      Then -> @pizza == undefined
+
 describe "jasmine-given implementation", ->
   describe "returning boolean values from Then", ->
     describe "Then()'s responsibility", ->
       passed=null
       beforeEach ->
         this.addMatchers
-          toHaveReturnedFalseFromThen: ->
-            passed = !this.actual.call()
+          toHaveReturnedFalseFromThen: (ctx) ->
+            passed = !this.actual.call(ctx)
             false
 
       context "a true is returned", ->
