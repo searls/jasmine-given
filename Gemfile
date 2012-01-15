@@ -1,7 +1,5 @@
 source :rubygems
 
 gem 'jasmine-headless-webkit'
+gem 'js_rake_tasks'
 gem 'rake'
-gem 'json_pure'
-gem 'semver'
-gem 'git'

@@ -14,7 +14,11 @@ GEM
       jasmine-core (~> 1.1.beta)
       multi_json
       rainbow
-    json_pure (1.6.1)
+    js_rake_tasks (0.0.1)
+      git (~> 1.2.5)
+      json_pure (~> 1.6.1)
+      semver (~> 1.0.1)
+    json_pure (1.6.5)
     multi_json (1.0.3)
     rainbow (1.1.1)
     rake (0.8.7)
@@ -24,8 +28,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  git
   jasmine-headless-webkit
-  json_pure
+  js_rake_tasks
   rake
-  semver
