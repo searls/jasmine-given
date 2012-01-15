@@ -1,4 +1,5 @@
 (function() {
+
   (function(jasmine) {
     var mostRecentlyUsed, o;
     beforeEach(function() {
@@ -88,18 +89,15 @@
           return Object.prototype.toString.call(thing) === "[object String]";
         },
         firstThat: function(test) {
-          var i, _results;
+          var i;
           i = 0;
-          _results = [];
           while (i < thing.length) {
-            if (test(thing[i]) === true) {
-              return thing[i];
-            }
-            _results.push(i++);
+            if (test(thing[i]) === true) return thing[i];
+            i++;
           }
-          return _results;
         }
       };
     };
   })(jasmine);
+
 }).call(this);
