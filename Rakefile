@@ -29,7 +29,7 @@ namespace "bump" do
     git = VersionsGit.new
     fail("Oops! Can't bump a version with a dirty repo!") unless git.clean?
     version = update_package_json(&blk)
-    tag_project(version)
+    tag_project(git,version)
   end
 
   def tag_project(git, version)
