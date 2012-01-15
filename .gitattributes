@@ -1,0 +1,7 @@
+spec/ export-ignore
+src/ export-ignore
+.gitignore export-ignore
+Gemfile export-ignore
+Gemfile.lock export-ignore
+Guardfile export-ignore
+Rakefile export-ignore
