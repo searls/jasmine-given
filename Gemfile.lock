@@ -13,13 +13,17 @@ GEM
       jasmine-core (~> 1.1.beta)
       multi_json
       rainbow
+    json_pure (1.6.1)
     multi_json (1.0.3)
     rainbow (1.1.1)
     rake (0.8.7)
+    semver (1.0.1)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   jasmine-headless-webkit
+  json_pure
   rake
+  semver
