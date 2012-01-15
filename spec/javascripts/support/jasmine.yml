@@ -1,5 +1,5 @@
 src_files:
-  - "lib/**/*.{js,coffee}"
+  - "src/**/*.{js,coffee}"
 
 stylesheets:
 
