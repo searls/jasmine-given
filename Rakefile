@@ -71,8 +71,6 @@ namespace "bump" do
       [@g.status.deleted,@g.status.added,@g.status.changed].all? { |o| o.size == 0 }
     end
   end
-
-
 end
 
 
