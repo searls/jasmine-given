@@ -1,0 +1,28 @@
+{
+  "name": "jasmine-given",
+  "description": "A Given-When-Then DSL for Jasmine",
+  "version": "0.0.4",
+  "keywords": [
+    "jasmine",
+    "bdd"
+  ],
+  "dependencies": {
+    "https://github.com/pivotal/jasmine": "Any"
+  },
+  "bugs": {
+    "web": "https://github.com/searls/jasmine-given/issues"
+  },
+  "repositories": [
+    {
+      "type": "git",
+      "url": "https://github.com/searls/jasmine-given.git"
+    }
+  ],
+  "licenses": [
+    {
+      "name": "Apache License 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0"
+    }
+  ],
+  "homepage": "https://github.com/searls/jasmine-given"
+}
