@@ -64,7 +64,7 @@ namespace "bump" do
     end
 
     def push
-      @g.push("origin",g.current_branch,true)
+      @g.push("origin",@g.current_branch,true)
     end
 
     def clean?
