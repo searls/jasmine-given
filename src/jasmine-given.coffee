@@ -8,9 +8,7 @@
       catch e
         exception = e
       @message = ->
-        msg = "Then clause" + (if n > 1 then " #" + n else "") + " ["
-        msg += @actual.toString()
-        msg += "] failed by "
+        msg = "Then clause #{if n > 1 then " ##{n}" else ""} [#{@actual.toString()}] failed by "
         if exception
           msg += "throwing: " + exception.toString()
         else
@@ -20,12 +18,8 @@
       result is false
 
   window.When = window.Given = ->
-    setupFunction = o(arguments).firstThat((arg) ->
-      o(arg).isFunction()
-    )
-    assignResultTo = o(arguments).firstThat((arg) ->
-      o(arg).isString()
-    )
+    setupFunction = o(arguments).firstThat (arg) -> o(arg).isFunction()
+    assignResultTo = o(arguments).firstThat (arg) -> o(arg).isString()
     mostRecentlyUsed = window.Given
     beforeEach ->
       context = jasmine.getEnv().currentSpec
@@ -34,28 +28,22 @@
         unless context[assignResultTo]
           context[assignResultTo] = result
         else
-          throw new Error("Unfortunately, the variable '" + assignResultTo + "' is already assigned to: " + context[assignResultTo])
+          throw new Error("Unfortunately, the variable '#{assignResultTo}' is already assigned to: #{context[assignResultTo]}")
 
   window.Then = (expectationFunction) ->
     mostRecentlyUsed = window.Then
-    self = this
     expectations = [ expectationFunction ]
     subsequentThen = (additionalExpectation) ->
       expectations.push additionalExpectation
       this
 
-    chainableThen =
-      Then: subsequentThen
-      And: subsequentThen
-
     it "then", ->
       i = 0
-
       while i < expectations.length
         expect(expectations[i]).not.toHaveReturnedFalseFromThen jasmine.getEnv().currentSpec, i + 1
         i++
 
-    chainableThen
+    Then: subsequentThen, And: subsequentThen
 
   mostRecentlyUsed = window.Given
   window.And = ->

@@ -15,9 +15,7 @@
           }
           this.message = function() {
             var msg;
-            msg = "Then clause" + (n > 1 ? " #" + n : "") + " [";
-            msg += this.actual.toString();
-            msg += "] failed by ";
+            msg = "Then clause " + (n > 1 ? " #" + n : "") + " [" + (this.actual.toString()) + "] failed by ";
             if (exception) {
               msg += "throwing: " + exception.toString();
             } else {
@@ -52,17 +50,12 @@
       });
     };
     window.Then = function(expectationFunction) {
-      var chainableThen, expectations, mostRecentlyUsed, self, subsequentThen;
+      var expectations, mostRecentlyUsed, subsequentThen;
       mostRecentlyUsed = window.Then;
-      self = this;
       expectations = [expectationFunction];
       subsequentThen = function(additionalExpectation) {
         expectations.push(additionalExpectation);
         return this;
-      };
-      chainableThen = {
-        Then: subsequentThen,
-        And: subsequentThen
       };
       it("then", function() {
         var i, _results;
@@ -74,7 +67,10 @@
         }
         return _results;
       });
-      return chainableThen;
+      return {
+        Then: subsequentThen,
+        And: subsequentThen
+      };
     };
     mostRecentlyUsed = window.Given;
     window.And = function() {
