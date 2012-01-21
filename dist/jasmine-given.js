@@ -1,7 +1,16 @@
 (function() {
 
   (function(jasmine) {
-    var mostRecentlyUsed, o;
+    var mostRecentlyUsed, o, stringifyExpectation;
+    stringifyExpectation = function(expectation) {
+      var matches;
+      matches = expectation.toString().replace(/\n/g, '').match(/function\s?\(\)\s?{\s*(return\s+)?(.*?)(;)?\s*}/i);
+      if (matches && matches.length >= 3) {
+        return matches[2];
+      } else {
+        return "";
+      }
+    };
     beforeEach(function() {
       return this.addMatchers({
         toHaveReturnedFalseFromThen: function(context, n) {
@@ -15,7 +24,7 @@
           }
           this.message = function() {
             var msg;
-            msg = "Then clause " + (n > 1 ? " #" + n : "") + " [" + (this.actual.toString()) + "] failed by ";
+            msg = "Then clause " + (n > 1 ? " #" + n : "") + " `" + (stringifyExpectation(this.actual)) + "` failed by ";
             if (exception) {
               msg += "throwing: " + exception.toString();
             } else {
@@ -57,7 +66,7 @@
         expectations.push(additionalExpectation);
         return this;
       };
-      it("then", function() {
+      it("then " + (stringifyExpectation(expectations)), function() {
         var i, _results;
         i = 0;
         _results = [];

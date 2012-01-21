@@ -1,4 +1,8 @@
 ((jasmine) ->
+  stringifyExpectation = (expectation) ->
+    matches = expectation.toString().replace(/\n/g,'').match(/function\s?\(\)\s?{\s*(return\s+)?(.*?)(;)?\s*}/i)
+    if matches and matches.length >= 3 then matches[2] else ""
+
   beforeEach ->
     @addMatchers toHaveReturnedFalseFromThen: (context, n) ->
       result = false
@@ -8,7 +12,7 @@
       catch e
         exception = e
       @message = ->
-        msg = "Then clause #{if n > 1 then " ##{n}" else ""} [#{@actual.toString()}] failed by "
+        msg = "Then clause #{if n > 1 then " ##{n}" else ""} `#{stringifyExpectation(@actual)}` failed by "
         if exception
           msg += "throwing: " + exception.toString()
         else
@@ -37,7 +41,7 @@
       expectations.push additionalExpectation
       this
 
-    it "then", ->
+    it "then #{stringifyExpectation(expectations)}", ->
       i = 0
       while i < expectations.length
         expect(expectations[i]).not.toHaveReturnedFalseFromThen jasmine.getEnv().currentSpec, i + 1
