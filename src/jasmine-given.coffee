@@ -1,3 +1,8 @@
+###
+jasmine-given @@VERSION@@
+Adds a Given-When-Then DSL to jasmine as an alternative style for specs
+site: https://github.com/searls/jasmine-given
+###
 ((jasmine) ->
   stringifyExpectation = (expectation) ->
     matches = expectation.toString().replace(/\n/g,'').match(/function\s?\(\)\s?{\s*(return\s+)?(.*?)(;)?\s*}/i)
