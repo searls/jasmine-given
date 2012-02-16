@@ -25,11 +25,12 @@ site: https://github.com/searls/jasmine-given
         msg
 
       result is false
+  root = @
 
-  window.When = window.Given = ->
+  root.When = root.Given = ->
     setupFunction = o(arguments).firstThat (arg) -> o(arg).isFunction()
     assignResultTo = o(arguments).firstThat (arg) -> o(arg).isString()
-    mostRecentlyUsed = window.Given
+    mostRecentlyUsed = root.Given
     beforeEach ->
       context = jasmine.getEnv().currentSpec
       result = setupFunction.call(context)
@@ -39,8 +40,8 @@ site: https://github.com/searls/jasmine-given
         else
           throw new Error("Unfortunately, the variable '#{assignResultTo}' is already assigned to: #{context[assignResultTo]}")
 
-  window.Then = (expectationFunction) ->
-    mostRecentlyUsed = window.Then
+  root.Then = (expectationFunction) ->
+    mostRecentlyUsed = root.Then
     expectations = [ expectationFunction ]
     subsequentThen = (additionalExpectation) ->
       expectations.push additionalExpectation
@@ -54,8 +55,8 @@ site: https://github.com/searls/jasmine-given
 
     Then: subsequentThen, And: subsequentThen
 
-  mostRecentlyUsed = window.Given
-  window.And = ->
+  mostRecentlyUsed = root.Given
+  root.And = ->
     mostRecentlyUsed.apply this, jasmine.util.argsToArray(arguments)
 
   o = (thing) ->

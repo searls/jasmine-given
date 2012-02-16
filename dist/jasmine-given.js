@@ -1,7 +1,14 @@
+
+/*
+jasmine-given @@VERSION@@
+Adds a Given-When-Then DSL to jasmine as an alternative style for specs
+site: https://github.com/searls/jasmine-given
+*/
+
 (function() {
 
   (function(jasmine) {
-    var mostRecentlyUsed, o, stringifyExpectation;
+    var mostRecentlyUsed, o, root, stringifyExpectation;
     stringifyExpectation = function(expectation) {
       var matches;
       matches = expectation.toString().replace(/\n/g, '').match(/function\s?\(\)\s?{\s*(return\s+)?(.*?)(;)?\s*}/i);
@@ -36,7 +43,8 @@
         }
       });
     });
-    window.When = window.Given = function() {
+    root = this;
+    root.When = root.Given = function() {
       var assignResultTo, mostRecentlyUsed, setupFunction;
       setupFunction = o(arguments).firstThat(function(arg) {
         return o(arg).isFunction();
@@ -44,7 +52,7 @@
       assignResultTo = o(arguments).firstThat(function(arg) {
         return o(arg).isString();
       });
-      mostRecentlyUsed = window.Given;
+      mostRecentlyUsed = root.Given;
       return beforeEach(function() {
         var context, result;
         context = jasmine.getEnv().currentSpec;
@@ -58,9 +66,9 @@
         }
       });
     };
-    window.Then = function(expectationFunction) {
+    root.Then = function(expectationFunction) {
       var expectations, mostRecentlyUsed, subsequentThen;
-      mostRecentlyUsed = window.Then;
+      mostRecentlyUsed = root.Then;
       expectations = [expectationFunction];
       subsequentThen = function(additionalExpectation) {
         expectations.push(additionalExpectation);
@@ -81,8 +89,8 @@
         And: subsequentThen
       };
     };
-    mostRecentlyUsed = window.Given;
-    window.And = function() {
+    mostRecentlyUsed = root.Given;
+    root.And = function() {
       return mostRecentlyUsed.apply(this, jasmine.util.argsToArray(arguments));
     };
     return o = function(thing) {
