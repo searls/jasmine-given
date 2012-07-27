@@ -1,9 +1,10 @@
 
 /*
-jasmine-given @@VERSION@@
+jasmine-given 0.0.6
 Adds a Given-When-Then DSL to jasmine as an alternative style for specs
 site: https://github.com/searls/jasmine-given
 */
+
 
 (function() {
 
@@ -105,9 +106,12 @@ site: https://github.com/searls/jasmine-given
           var i;
           i = 0;
           while (i < thing.length) {
-            if (test(thing[i]) === true) return thing[i];
+            if (test(thing[i]) === true) {
+              return thing[i];
+            }
             i++;
           }
+          return void 0;
         }
       };
     };
