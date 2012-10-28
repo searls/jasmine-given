@@ -105,7 +105,7 @@ The above spec can also be expressed in JavaScript:
 
 ``` javascript
 
-ddescribe("eliminating redundant test execution", function() {
+describe("eliminating redundant test execution", function() {
   context("a traditional spec with numerous Then statements", function() {
     var timesGivenWasInvoked = 0,
         timesWhenWasInvoked = 0;
