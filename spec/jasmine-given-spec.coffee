@@ -23,7 +23,7 @@ describe "jasmine-given CoffeeScript API", ->
       Then -> timesGivenWasInvoked == 1
       Then -> timesWhenWasInvoked == 2
       Then -> timesGivenWasInvoked == 3
-      Then -> timesWhenWasInvoked == 4
+      Then "it's important this gets invoked separately for each spec", -> timesWhenWasInvoked == 4
 
     context "using And statements", ->
       timesGivenWasInvoked = timesWhenWasInvoked = 0
