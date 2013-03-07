@@ -1,7 +1,7 @@
 {
   "name": "jasmine-given",
   "description": "A Given-When-Then DSL for Jasmine",
-  "version": "0.0.7",
+  "version": "2.0.0",
   "keywords": [
     "jasmine",
     "bdd"
