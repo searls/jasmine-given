@@ -40,6 +40,20 @@ describe "assigning stuff to variables", ->
 
 As you might infer from the above, `Then` will trigger a spec failure when the function passed to it returns `false`. As shown above, traditional expectations can still be used, but using simple booleans can make for significantly easier-to-read expectations when you're asserting something as obvious as equality.
 
+Jasmine-given labels your underlying `it` blocks with the source expression
+itself, encouraging writing cleaner, clearer matchers -- and more DRY than
+saying the same thing twice, once in code and once in English.  But there
+are times when we're using third-party libraries or matchers that just
+don't read cleanly as English, even when they're expressing a simple concept.
+Or you are using a collection of `Then` and `And` to express a single
+notion.  So when needed you *can* use a label for your `Then` statements:
+
+        Then "makes AJAX POST request to create item", -> expect(@ajax_spy).toHaveBeenCalled()
+        And -> @ajax_spy.mostRecentCall.args[0].type = 'POST'
+        And -> @ajax_spy.mostRecentCall.args[0].url == "/items"
+        And -> @ajax_spy.mostRecentCall.args[0].data.item.user_id == userID
+        And -> @ajax_spy.mostRecentCall.args[0].data.item.name == itemName
+
 ## Example (JavaScript)
 
 Of course, jasmine-given also works fine in JavaScript; but as you can see, it's exceptionally clunky in comparison:

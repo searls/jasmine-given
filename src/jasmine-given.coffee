@@ -58,11 +58,13 @@ site: https://github.com/searls/jasmine-given
 
   mostRecentExpectations = null
 
-  root.Then = (expectationFunction) ->
+  root.Then =  ->
+    label = o(arguments).firstThat (arg) -> o(arg).isString()
+    expectationFunction = o(arguments).firstThat (arg) -> o(arg).isFunction()
     mostRecentlyUsed = root.subsequentThen
     mostRecentExpectations = expectations = [ expectationFunction ]
 
-    it "then #{stringifyExpectation(expectations)}", ->
+    it "then #{label ? stringifyExpectation(expectations)}", ->
       block() for block in (whenList ? [])
       i = 0
       while i < expectations.length
