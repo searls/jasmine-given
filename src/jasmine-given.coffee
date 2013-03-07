@@ -4,6 +4,9 @@ Adds a Given-When-Then DSL to jasmine as an alternative style for specs
 site: https://github.com/searls/jasmine-given
 ###
 ((jasmine) ->
+
+  mostRecentlyUsed = null
+
   stringifyExpectation = (expectation) ->
     matches = expectation.toString().replace(/\n/g,'').match(/function\s?\(\)\s?{\s*(return\s+)?(.*?)(;)?\s*}/i)
     if matches and matches.length >= 3 then matches[2] else ""
@@ -27,11 +30,24 @@ site: https://github.com/searls/jasmine-given
       result is false
   root = @
 
-  root.When = root.Given = ->
-    setupFunction = o(arguments).firstThat (arg) -> o(arg).isFunction()
-    assignResultTo = o(arguments).firstThat (arg) -> o(arg).isString()
+  root.Given = ->
     mostRecentlyUsed = root.Given
+    beforeEach getBlock(arguments)
+
+  whenList = []
+
+  root.When = ->
+    mostRecentlyUsed = root.When
+    b = getBlock(arguments)
     beforeEach ->
+      whenList.push b
+    afterEach ->
+      whenList.pop()
+
+  getBlock = (thing) ->
+    setupFunction = o(thing).firstThat (arg) -> o(arg).isFunction()
+    assignResultTo = o(thing).firstThat (arg) -> o(arg).isString()
+    ->
       context = jasmine.getEnv().currentSpec
       result = setupFunction.call(context)
       if assignResultTo
@@ -40,20 +56,26 @@ site: https://github.com/searls/jasmine-given
         else
           throw new Error("Unfortunately, the variable '#{assignResultTo}' is already assigned to: #{context[assignResultTo]}")
 
-  root.Then = (expectationFunction) ->
-    mostRecentlyUsed = root.Then
-    expectations = [ expectationFunction ]
-    subsequentThen = (additionalExpectation) ->
-      expectations.push additionalExpectation
-      this
+  mostRecentExpectations = null
 
-    it "then #{stringifyExpectation(expectations)}", ->
+  root.Then =  ->
+    label = o(arguments).firstThat (arg) -> o(arg).isString()
+    expectationFunction = o(arguments).firstThat (arg) -> o(arg).isFunction()
+    mostRecentlyUsed = root.subsequentThen
+    mostRecentExpectations = expectations = [ expectationFunction ]
+
+    it "then #{label ? stringifyExpectation(expectations)}", ->
+      block() for block in (whenList ? [])
       i = 0
       while i < expectations.length
         expect(expectations[i]).not.toHaveReturnedFalseFromThen jasmine.getEnv().currentSpec, i + 1
         i++
 
     Then: subsequentThen, And: subsequentThen
+
+  root.subsequentThen = (additionalExpectation) ->
+    mostRecentExpectations.push additionalExpectation
+    this
 
   mostRecentlyUsed = root.Given
   root.And = ->

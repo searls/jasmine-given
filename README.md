@@ -12,7 +12,9 @@ The big idea is "why approximate given-when-then, when we could actually just us
 
 The small idea is "if we couldn't write English along with our `it` blocks then we'd be encouraged to write cleaner, clearer matchers to articulate our expectations."
 
-Both ideas are pretty cool. Thanks, Jim!
+The subtle idea is that all "given"s should be evaluated before the "when"s.  This can DRY up your specs: you don't need to repeat a series of "when"s in order to test the final result with different initial "given"s.
+
+All ideas are pretty cool. Thanks, Jim!
 
 ## Example (CoffeeScript)
 
@@ -38,6 +40,20 @@ describe "assigning stuff to variables", ->
 
 As you might infer from the above, `Then` will trigger a spec failure when the function passed to it returns `false`. As shown above, traditional expectations can still be used, but using simple booleans can make for significantly easier-to-read expectations when you're asserting something as obvious as equality.
 
+Jasmine-given labels your underlying `it` blocks with the source expression
+itself, encouraging writing cleaner, clearer matchers -- and more DRY than
+saying the same thing twice, once in code and once in English.  But there
+are times when we're using third-party libraries or matchers that just
+don't read cleanly as English, even when they're expressing a simple concept.
+Or you are using a collection of `Then` and `And` to express a single
+notion.  So when needed you *can* use a label for your `Then` statements:
+
+        Then "makes AJAX POST request to create item", -> expect(@ajax_spy).toHaveBeenCalled()
+        And -> @ajax_spy.mostRecentCall.args[0].type = 'POST'
+        And -> @ajax_spy.mostRecentCall.args[0].url == "/items"
+        And -> @ajax_spy.mostRecentCall.args[0].data.item.user_id == userID
+        And -> @ajax_spy.mostRecentCall.args[0].data.item.name == itemName
+
 ## Example (JavaScript)
 
 Of course, jasmine-given also works fine in JavaScript; but as you can see, it's exceptionally clunky in comparison:
@@ -62,6 +78,65 @@ describe("assigning stuff to variables", function() {
 });
 ```
 
+## Execution order: Givens then Whens then Thens
+
+The execution order for executing a `Then` is to execute all preceding `Given` blocks
+from the outside in, and next all the preceeding `When` blocks from the outside in, and
+then the `Then`.  This means that a later `Given` can affect an earlier `When`!
+While this may seem odd at first glance, it can DRY up your specs, especially if
+you are testing a series of `When` steps whose final outcome depends on an
+initial condition.  For example:
+
+```
+    Given -> user
+    When -> login user
+
+    describe "clicking create", ->
+
+        When -> createButton.click()
+        Then -> expect(ajax).toHaveBeenCalled()
+
+        describe "creation succeeds", ->
+            When -> ajax.success()
+            Then -> object_is_shown()
+
+            describe "reports success message", ->
+                Then -> feedback_message.hasContents "created"
+
+            describe "novice gets congratulations message", ->
+                Given -> user.isNovice = true
+                Then -> feedback_message.hasContents "congratulations!"
+
+            describe "expert gets no feedback", ->
+                Given -> user.isExpert = true
+                Then -> feedback_message.isEmpty()
+```
+For the final three `Then`s, the exeuction order is:
+
+```
+       Given -> user
+       When -> login user
+       When -> createButton.click()
+       When -> ajax.success()
+       Then -> feedback_message.hasContents "created"
+
+       Given -> user
+       Given -> user.isNovice = true
+       When -> login user
+       When -> createButton.click()
+       When -> ajax.success()
+       Then -> feedback_message.hasContents "congratulations!"
+
+       Given -> user
+       Given -> user.isExpert = true
+       When -> login user
+       When -> createButton.click()
+       When -> ajax.success()
+       Then -> feedback_message.isEmpty()
+```
+Without this `Given`/`When` execution order, the only straightforward way to get the above
+behavior would be to duplicate then `When`s for each user case.  
+
 ## Supporting Idempotent "Then" statements
 
 Jim mentioned to me that `Then` blocks ought to be idempotent (that is, since they're assertions they should not have any affect on the state of the subject being specified). As a result, one optimization that rspec-given might make would be to execute **n** `Then` expectations without executing each `Then`'s depended-on `Given` and `When` blocks **n** times.
@@ -81,25 +156,25 @@ describe "eliminating redundant test execution", ->
 ```
 Because there are four `Then` statements, the `Given` and `When` are each executed four times. That's because it would be unreasonable for Jasmine to expect each `it` function  to be idempotent.
 
-However, spec authors can leverage idempotence safely when writing in a given-when-then format. You opt-in with jasmine-given by chaining `Then` blocks, as shown below:
+However, spec authors can leverage idempotence safely when writing in a given-when-then format. You opt-in with jasmine-given by using `And` blocks, as shown below:
 
 ``` coffeescript
   context "chaining Then statements", ->
     timesGivenWasInvoked = timesWhenWasInvoked = 0
     Given -> timesGivenWasInvoked++
     When -> timesWhenWasInvoked++
-    Then(-> timesGivenWasInvoked == 1)
-    .Then(-> timesWhenWasInvoked == 1)
-    .Then(-> timesGivenWasInvoked == 1)
-    .Then(-> timesWhenWasInvoked == 1)
+
+    Then -> timesGivenWasInvoked == 1
+    And -> timesWhenWasInvoked == 1
+    And -> timesGivenWasInvoked == 1
+    And -> timesWhenWasInvoked == 1
+
     Then -> timesWhenWasInvoked == 2
 ```
 
-In this example, `Given` and `When` are only invoked one time each, because jasmine-given rolled all of those `Then` statements up into a single `it` in Jasmine.
+In this example, `Given` and `When` are only invoked one time each for the first `Then, because jasmine-given rolled all of those `Then` & `And` statements up into a single `it` in Jasmine.  Note that the label of the `it` is taken from the `Then` only.
 
 Leveraging this feature is likely to have the effect of speeding up your specs, especially if your specs are otherwise slow (integration specs or DOM-heavy).
-
-[Note that in the above, each `Then` needed to be wrapped in parentheses in order for CoffeeScript to understand that we were chaining invocations. If there's a cleaner way to do this in CoffeeScript, please [let me know](https://github.com/searls/jasmine-given/issues/new)]
 
 The above spec can also be expressed in JavaScript:
 
@@ -123,9 +198,9 @@ describe("eliminating redundant test execution", function() {
     Given(function() { timesGivenWasInvoked++; });
     When(function() { timesWhenWasInvoked++; });
     Then(function() { return timesGivenWasInvoked == 1; })
-    .Then(function() { return timesWhenWasInvoked == 1; })
-    .Then(function() { return timesGivenWasInvoked == 1; })
-    .Then(function() { return timesWhenWasInvoked == 1; })
+    And(function() { return timesWhenWasInvoked == 1; })
+    And(function() { return timesGivenWasInvoked == 1; })
+    And(function() { return timesWhenWasInvoked == 1; })
   });
 });
 
