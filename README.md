@@ -81,25 +81,25 @@ describe "eliminating redundant test execution", ->
 ```
 Because there are four `Then` statements, the `Given` and `When` are each executed four times. That's because it would be unreasonable for Jasmine to expect each `it` function  to be idempotent.
 
-However, spec authors can leverage idempotence safely when writing in a given-when-then format. You opt-in with jasmine-given by chaining `Then` blocks, as shown below:
+However, spec authors can leverage idempotence safely when writing in a given-when-then format. You opt-in with jasmine-given by using `And` blocks, as shown below:
 
 ``` coffeescript
   context "chaining Then statements", ->
     timesGivenWasInvoked = timesWhenWasInvoked = 0
     Given -> timesGivenWasInvoked++
     When -> timesWhenWasInvoked++
-    Then(-> timesGivenWasInvoked == 1)
-    .Then(-> timesWhenWasInvoked == 1)
-    .Then(-> timesGivenWasInvoked == 1)
-    .Then(-> timesWhenWasInvoked == 1)
+
+    Then -> timesGivenWasInvoked == 1
+    And -> timesWhenWasInvoked == 1
+    And -> timesGivenWasInvoked == 1
+    And -> timesWhenWasInvoked == 1
+
     Then -> timesWhenWasInvoked == 2
 ```
 
-In this example, `Given` and `When` are only invoked one time each, because jasmine-given rolled all of those `Then` statements up into a single `it` in Jasmine.
+In this example, `Given` and `When` are only invoked one time each for the first `Then, because jasmine-given rolled all of those `Then` & `And` statements up into a single `it` in Jasmine.  Note that the label of the `it` is taken from the `Then` only.
 
 Leveraging this feature is likely to have the effect of speeding up your specs, especially if your specs are otherwise slow (integration specs or DOM-heavy).
-
-[Note that in the above, each `Then` needed to be wrapped in parentheses in order for CoffeeScript to understand that we were chaining invocations. If there's a cleaner way to do this in CoffeeScript, please [let me know](https://github.com/searls/jasmine-given/issues/new)]
 
 The above spec can also be expressed in JavaScript:
 
@@ -123,9 +123,9 @@ describe("eliminating redundant test execution", function() {
     Given(function() { timesGivenWasInvoked++; });
     When(function() { timesWhenWasInvoked++; });
     Then(function() { return timesGivenWasInvoked == 1; })
-    .Then(function() { return timesWhenWasInvoked == 1; })
-    .Then(function() { return timesGivenWasInvoked == 1; })
-    .Then(function() { return timesWhenWasInvoked == 1; })
+    And(function() { return timesWhenWasInvoked == 1; })
+    And(function() { return timesGivenWasInvoked == 1; })
+    And(function() { return timesWhenWasInvoked == 1; })
   });
 });
 

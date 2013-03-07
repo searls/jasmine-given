@@ -21,9 +21,18 @@ describe "jasmine-given CoffeeScript API", ->
       Given -> timesGivenWasInvoked++
       When -> timesWhenWasInvoked++
       Then -> timesGivenWasInvoked == 1
-      And -> timesWhenWasInvoked == 2
-      And -> timesGivenWasInvoked == 3
-      And -> timesWhenWasInvoked == 4
+      Then -> timesWhenWasInvoked == 2
+      Then -> timesGivenWasInvoked == 3
+      Then -> timesWhenWasInvoked == 4
+
+    context "using And statements", ->
+      timesGivenWasInvoked = timesWhenWasInvoked = 0
+      Given -> timesGivenWasInvoked++
+      When -> timesWhenWasInvoked++
+      Then -> timesGivenWasInvoked == 1
+      And -> timesWhenWasInvoked == 1
+      And -> timesGivenWasInvoked == 1
+      And -> timesWhenWasInvoked == 1
 
     context "chaining Then statements", ->
       timesGivenWasInvoked = timesWhenWasInvoked = 0
@@ -33,7 +42,7 @@ describe "jasmine-given CoffeeScript API", ->
       .And(-> timesWhenWasInvoked == 1)
       .And(-> timesGivenWasInvoked == 1)
       .And(-> timesWhenWasInvoked == 1)
-      And -> timesWhenWasInvoked == 2
+      Then -> timesWhenWasInvoked == 2
 
   describe "And", ->
     context "following a Given", ->

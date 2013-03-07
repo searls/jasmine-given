@@ -4,6 +4,9 @@ Adds a Given-When-Then DSL to jasmine as an alternative style for specs
 site: https://github.com/searls/jasmine-given
 ###
 ((jasmine) ->
+
+  mostRecentlyUsed = null
+
   stringifyExpectation = (expectation) ->
     matches = expectation.toString().replace(/\n/g,'').match(/function\s?\(\)\s?{\s*(return\s+)?(.*?)(;)?\s*}/i)
     if matches and matches.length >= 3 then matches[2] else ""
@@ -40,12 +43,11 @@ site: https://github.com/searls/jasmine-given
         else
           throw new Error("Unfortunately, the variable '#{assignResultTo}' is already assigned to: #{context[assignResultTo]}")
 
+  mostRecentExpectations = null
+
   root.Then = (expectationFunction) ->
-    mostRecentlyUsed = root.Then
-    expectations = [ expectationFunction ]
-    subsequentThen = (additionalExpectation) ->
-      expectations.push additionalExpectation
-      this
+    mostRecentlyUsed = root.subsequentThen
+    mostRecentExpectations = expectations = [ expectationFunction ]
 
     it "then #{stringifyExpectation(expectations)}", ->
       i = 0
@@ -54,6 +56,10 @@ site: https://github.com/searls/jasmine-given
         i++
 
     Then: subsequentThen, And: subsequentThen
+
+  root.subsequentThen = (additionalExpectation) ->
+    mostRecentExpectations.push additionalExpectation
+    this
 
   mostRecentlyUsed = root.Given
   root.And = ->

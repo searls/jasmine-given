@@ -24,9 +24,21 @@ describe("jasmine-given JavaScript API", function() {
       Given(function() { timesGivenWasInvoked++; });
       When(function() { timesWhenWasInvoked++; });
       Then(function() { return timesGivenWasInvoked == 1; });
-      And(function() { return timesWhenWasInvoked == 2; });
-      And(function() { return timesGivenWasInvoked == 3; });
-      And(function() { return timesWhenWasInvoked == 4; });
+      Then(function() { return timesWhenWasInvoked == 2; });
+      Then(function() { return timesGivenWasInvoked == 3; });
+      Then(function() { return timesWhenWasInvoked == 4; });
+    });
+
+    context("using And statements", function() {
+      var timesGivenWasInvoked = 0,
+          timesWhenWasInvoked = 0;
+      Given(function() { timesGivenWasInvoked++; });
+      When(function() { timesWhenWasInvoked++; });
+      Then(function() { return timesGivenWasInvoked == 1; });
+      And(function() { return timesWhenWasInvoked == 1; });
+      And(function() { return timesGivenWasInvoked == 1; });
+      And(function() { return timesWhenWasInvoked == 1; });
+      Then(function() { return timesWhenWasInvoked == 2; })
     });
 
     context("chaining Then statements", function() {
@@ -38,6 +50,7 @@ describe("jasmine-given JavaScript API", function() {
       .And(function() { return timesWhenWasInvoked == 1; })
       .And(function() { return timesGivenWasInvoked == 1; })
       .And(function() { return timesWhenWasInvoked == 1; })
+      Then(function() { return timesWhenWasInvoked == 2; })
     });
   });
 
