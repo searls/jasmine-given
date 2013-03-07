@@ -62,6 +62,26 @@ describe "jasmine-given CoffeeScript API", ->
     context "a subsequent unrelated test run", ->
       Then -> @pizza == undefined
 
+  describe "Givens before Whens order", ->
+      context "Outer block", ->
+          Given ->  @a = 1
+          Given ->  @b = 2
+          When -> @sum = @a + @b
+          Then -> @sum == 3
+
+          context "Middle block", ->
+            Given -> @units = "days"
+            When -> @label = "#{@sum} #{@units}"
+            Then -> @label == "3 days"
+
+            context "Inner block A", ->
+                Given -> @a = -2
+                Then -> @label == "0 days"
+
+            context "Inner block B", ->
+                Given -> @units = "cm"
+                Then -> @label == "3 cm"
+
 describe "jasmine-given implementation", ->
   describe "returning boolean values from Then", ->
     describe "Then()'s responsibility", ->
