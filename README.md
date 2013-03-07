@@ -2,12 +2,12 @@
 
 ## 2.x series
 
-We just released a version 2.0.0, thanks to the contributions of @ronen, to bring jasmine-given closer to parity with rspec-given. In particular, jasmine-given will now:
+We just released a version 2.0.0, thanks to the contributions of [@ronen](https://github.com/ronen), to bring jasmine-given closer to parity with rspec-given. In particular, jasmine-given will now:
 
 * ensure that `Given` statements [will *always* execute before](#execution-order-givens-then-whens-then-thens) any `When` statements. This is counter-intuitive at first, but can really help you DRY up specs that require variable setup.
 * [allow users to use `And` in place of multiple `Then` statements](#supporting-idempotent-then-statements); when using `And` following a `Then`, the set-up will only be executed for the first `Then`, which could be a significant speed-up depending on the test while looking cleaner than chaining `Then` statements with parentheses.
 
-Keep in mind that the former will be a **breaking changes** for many test suites that currently use jasmine-given, so be sure to allot yourself some time to address any test failures that occur because a `Given` was placed intentionally after a `When`.
+Keep in mind that the former will be a **breaking change** for many test suites that currently use jasmine-given, so be sure to allot yourself some time to address any test failures that occur because a `Given` was incidentally placed after a `When` in a way that doesn't agree with the new execution order.
 
 # jasmine-given
 
