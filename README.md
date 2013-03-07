@@ -12,7 +12,9 @@ The big idea is "why approximate given-when-then, when we could actually just us
 
 The small idea is "if we couldn't write English along with our `it` blocks then we'd be encouraged to write cleaner, clearer matchers to articulate our expectations."
 
-Both ideas are pretty cool. Thanks, Jim!
+The subtle idea is that all "given"s should be evaluated before the "when"s.  This can DRY up your specs: you don't need to repeat a series of "when"s in order to test the final result with different initial "given"s.
+
+All ideas are pretty cool. Thanks, Jim!
 
 ## Example (CoffeeScript)
 
@@ -61,6 +63,65 @@ describe("assigning stuff to variables", function() {
   Then(function() { expect(subject.length).toBe(1); });
 });
 ```
+
+## Execution order: Givens then Whens then Thens
+
+The execution order for executing a `Then` is to execute all preceding `Given` blocks
+from the outside in, and next all the preceeding `When` blocks from the outside in, and
+then the `Then`.  This means that a later `Given` can affect an earlier `When`!
+While this may seem odd at first glance, it can DRY up your specs, especially if
+you are testing a series of `When` steps whose final outcome depends on an
+initial condition.  For example:
+
+```
+    Given -> user
+    When -> login user
+
+    describe "clicking create", ->
+
+        When -> createButton.click()
+        Then -> expect(ajax).toHaveBeenCalled()
+
+        describe "creation succeeds", ->
+            When -> ajax.success()
+            Then -> object_is_shown()
+
+            describe "reports success message", ->
+                Then -> feedback_message.hasContents "created"
+
+            describe "novice gets congratulations message", ->
+                Given -> user.isNovice = true
+                Then -> feedback_message.hasContents "congratulations!"
+
+            describe "expert gets no feedback", ->
+                Given -> user.isExpert = true
+                Then -> feedback_message.isEmpty()
+```
+For the final three `Then`s, the exeuction order is:
+
+```
+       Given -> user
+       When -> login user
+       When -> createButton.click()
+       When -> ajax.success()
+       Then -> feedback_message.hasContents "created"
+
+       Given -> user
+       Given -> user.isNovice = true
+       When -> login user
+       When -> createButton.click()
+       When -> ajax.success()
+       Then -> feedback_message.hasContents "congratulations!"
+
+       Given -> user
+       Given -> user.isExpert = true
+       When -> login user
+       When -> createButton.click()
+       When -> ajax.success()
+       Then -> feedback_message.isEmpty()
+```
+Without this `Given`/`When` execution order, the only straightforward way to get the above
+behavior would be to duplicate then `When`s for each user case.  
 
 ## Supporting Idempotent "Then" statements
 
