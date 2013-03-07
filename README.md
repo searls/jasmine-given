@@ -1,6 +1,15 @@
-# jasmine-given
-
 [![Build Status](https://secure.travis-ci.org/searls/jasmine-given.png)](http://travis-ci.org/searls/jasmine-given)
+
+## 2.x series
+
+We just released a version 2.0.0, thanks to the contributions of @ronen, to bring jasmine-given closer to parity with rspec-given. In particular, jasmine-given will now:
+
+* ensure that `Given` statements [will *always* execute before](#execution-order-givens-then-whens-then-thens) any `When` statements. This is counter-intuitive at first, but can really help you DRY up specs that require variable setup.
+* [allow users to use `And` in place of multiple `Then` statements](#supporting-idempotent-then-statements); when using `And` following a `Then`, the set-up will only be executed for the first `Then`, which could be a significant speed-up depending on the test while looking cleaner than chaining `Then` statements with parentheses.
+
+Keep in mind that the former will be a **breaking changes** for many test suites that currently use jasmine-given, so be sure to allot yourself some time to address any test failures that occur because a `Given` was placed intentionally after a `When`.
+
+# jasmine-given
 
 jasmine-given is a [Jasmine](https://github.com/pivotal/jasmine) helper that encourages leaner, meaner specs using `Given`, `When`, and `Then`. It is a shameless tribute to Jim Weirich's terrific [rspec-given](https://github.com/jimweirich/rspec-given) gem.
 
