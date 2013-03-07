@@ -121,11 +121,11 @@ For the final three `Then`s, the exeuction order is:
        Then -> feedback_message.isEmpty()
 ```
 Without this `Given`/`When` execution order, the only straightforward way to get the above
-behavior would be to duplicate then `When`s for each user case.  
+behavior would be to duplicate then `When`s for each user case.
 
 ## Supporting Idempotent "Then" statements
 
-Jim mentioned to me that `Then` blocks ought to be idempotent (that is, since they're assertions they should not have any affect on the state of the subject being specified). As a result, one optimization that rspec-given might make would be to execute **n** `Then` expectations without executing each `Then`'s depended-on `Given` and `When` blocks **n** times.
+Jim mentioned to me that `Then` blocks ought to be idempotent (that is, since they're assertions they should not have any affect on the state of the subject being specified). As a result, one improvement he made to rspec-given 2.x was the `And` method, which—by following a `Then`—would be like invoked **n** `Then` expectations without executing each `Then`'s depended-on `Given` and `When` blocks **n** times.
 
 Take this example from jasmine-given's spec:
 
