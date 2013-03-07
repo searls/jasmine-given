@@ -56,12 +56,11 @@ site: https://github.com/searls/jasmine-given
         else
           throw new Error("Unfortunately, the variable '#{assignResultTo}' is already assigned to: #{context[assignResultTo]}")
 
+  mostRecentExpectations = null
+
   root.Then = (expectationFunction) ->
-    mostRecentlyUsed = root.Then
-    expectations = [ expectationFunction ]
-    subsequentThen = (additionalExpectation) ->
-      expectations.push additionalExpectation
-      this
+    mostRecentlyUsed = root.subsequentThen
+    mostRecentExpectations = expectations = [ expectationFunction ]
 
     it "then #{stringifyExpectation(expectations)}", ->
       block() for block in (whenList ? [])
@@ -71,6 +70,10 @@ site: https://github.com/searls/jasmine-given
         i++
 
     Then: subsequentThen, And: subsequentThen
+
+  root.subsequentThen = (additionalExpectation) ->
+    mostRecentExpectations.push additionalExpectation
+    this
 
   mostRecentlyUsed = root.Given
   root.And = ->
