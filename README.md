@@ -167,7 +167,7 @@ However, spec authors can leverage idempotence safely when writing in a given-wh
     Then -> timesWhenWasInvoked == 2
 ```
 
-In this example, `Given` and `When` are only invoked one time each for the first `Then, because jasmine-given rolled all of those `Then` & `And` statements up into a single `it` in Jasmine.  Note that the label of the `it` is taken from the `Then` only.
+In this example, `Given` and `When` are only invoked one time each for the first `Then`, because jasmine-given rolled all of those `Then` & `And` statements up into a single `it` in Jasmine.  Note that the label of the `it` is taken from the `Then` only.
 
 Leveraging this feature is likely to have the effect of speeding up your specs, especially if your specs are otherwise slow (integration specs or DOM-heavy).
 
