@@ -1,6 +1,15 @@
-# jasmine-given
-
 [![Build Status](https://secure.travis-ci.org/searls/jasmine-given.png)](http://travis-ci.org/searls/jasmine-given)
+
+## 2.x series
+
+We just released a version 2.0.0, thanks to the contributions of [@ronen](https://github.com/ronen), to bring jasmine-given closer to parity with rspec-given. In particular, jasmine-given will now:
+
+* ensure that `Given` statements [will *always* execute before](#execution-order-givens-then-whens-then-thens) any `When` statements. This is counter-intuitive at first, but can really help you DRY up specs that require variable setup.
+* [allow users to use `And` in place of multiple `Then` statements](#supporting-idempotent-then-statements); when using `And` following a `Then`, the set-up will only be executed for the first `Then`, which could be a significant speed-up depending on the test while looking cleaner than chaining `Then` statements with parentheses.
+
+Keep in mind that the former will be a **breaking change** for many test suites that currently use jasmine-given, so be sure to allot yourself some time to address any test failures that occur because a `Given` was incidentally placed after a `When` in a way that doesn't agree with the new execution order.
+
+# jasmine-given
 
 jasmine-given is a [Jasmine](https://github.com/pivotal/jasmine) helper that encourages leaner, meaner specs using `Given`, `When`, and `Then`. It is a shameless tribute to Jim Weirich's terrific [rspec-given](https://github.com/jimweirich/rspec-given) gem.
 
@@ -39,20 +48,6 @@ describe "assigning stuff to variables", ->
 ```
 
 As you might infer from the above, `Then` will trigger a spec failure when the function passed to it returns `false`. As shown above, traditional expectations can still be used, but using simple booleans can make for significantly easier-to-read expectations when you're asserting something as obvious as equality.
-
-Jasmine-given labels your underlying `it` blocks with the source expression
-itself, encouraging writing cleaner, clearer matchers -- and more DRY than
-saying the same thing twice, once in code and once in English.  But there
-are times when we're using third-party libraries or matchers that just
-don't read cleanly as English, even when they're expressing a simple concept.
-Or you are using a collection of `Then` and `And` to express a single
-notion.  So when needed you *can* use a label for your `Then` statements:
-
-        Then "makes AJAX POST request to create item", -> expect(@ajax_spy).toHaveBeenCalled()
-        And -> @ajax_spy.mostRecentCall.args[0].type = 'POST'
-        And -> @ajax_spy.mostRecentCall.args[0].url == "/items"
-        And -> @ajax_spy.mostRecentCall.args[0].data.item.user_id == userID
-        And -> @ajax_spy.mostRecentCall.args[0].data.item.name == itemName
 
 ## Example (JavaScript)
 
@@ -135,11 +130,11 @@ For the final three `Then`s, the exeuction order is:
        Then -> feedback_message.isEmpty()
 ```
 Without this `Given`/`When` execution order, the only straightforward way to get the above
-behavior would be to duplicate then `When`s for each user case.  
+behavior would be to duplicate then `When`s for each user case.
 
 ## Supporting Idempotent "Then" statements
 
-Jim mentioned to me that `Then` blocks ought to be idempotent (that is, since they're assertions they should not have any affect on the state of the subject being specified). As a result, one optimization that rspec-given might make would be to execute **n** `Then` expectations without executing each `Then`'s depended-on `Given` and `When` blocks **n** times.
+Jim mentioned to me that `Then` blocks ought to be idempotent (that is, since they're assertions they should not have any affect on the state of the subject being specified). As a result, one improvement he made to rspec-given 2.x was the `And` method, which—by following a `Then`—would be like invoked **n** `Then` expectations without executing each `Then`'s depended-on `Given` and `When` blocks **n** times.
 
 Take this example from jasmine-given's spec:
 
@@ -172,7 +167,7 @@ However, spec authors can leverage idempotence safely when writing in a given-wh
     Then -> timesWhenWasInvoked == 2
 ```
 
-In this example, `Given` and `When` are only invoked one time each for the first `Then, because jasmine-given rolled all of those `Then` & `And` statements up into a single `it` in Jasmine.  Note that the label of the `it` is taken from the `Then` only.
+In this example, `Given` and `When` are only invoked one time each for the first `Then`, because jasmine-given rolled all of those `Then` & `And` statements up into a single `it` in Jasmine.  Note that the label of the `it` is taken from the `Then` only.
 
 Leveraging this feature is likely to have the effect of speeding up your specs, especially if your specs are otherwise slow (integration specs or DOM-heavy).
 
@@ -205,3 +200,15 @@ describe("eliminating redundant test execution", function() {
 });
 
 ```
+
+# "it"-style test labels
+
+Jasmine-given labels your underlying `it` blocks with the source expression itself, encouraging writing cleaner, clearer matchers -- and more DRY than saying the same thing twice, once in code and once in English.  But there are times when we're using third-party libraries or matchers that just don't read cleanly as English, even when they're expressing a simple concept.
+
+Or, perhaps you are using a collection of `Then` and `And` statements to express a single specification.  So, when needed, you *may* use a label for your `Then` statements:
+
+        Then "makes AJAX POST request to create item", -> expect(@ajax_spy).toHaveBeenCalled()
+        And -> @ajax_spy.mostRecentCall.args[0].type = 'POST'
+        And -> @ajax_spy.mostRecentCall.args[0].url == "/items"
+        And -> @ajax_spy.mostRecentCall.args[0].data.item.user_id == userID
+        And -> @ajax_spy.mostRecentCall.args[0].data.item.name == itemName
