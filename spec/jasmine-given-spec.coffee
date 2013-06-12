@@ -44,6 +44,19 @@ describe "jasmine-given CoffeeScript API", ->
       .And(-> timesWhenWasInvoked == 1)
       Then -> timesWhenWasInvoked == 2
 
+  describe "Invariant", ->
+    context "implicitly called for each Then", ->
+      timesInvariantWasInvoked = 0
+      Invariant -> timesInvariantWasInvoked++
+      Then -> timesInvariantWasInvoked == 1
+      Then -> timesInvariantWasInvoked == 2
+
+    context "following a Then", ->
+      Given -> @meat = 'pork'
+      When -> @meat += 'muffin'
+      Then -> @meat == 'porkmuffin'
+      And -> @meat != 'hammuffin'
+
   describe "And", ->
     context "following a Given", ->
       Given -> @a = 'a'

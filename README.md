@@ -200,6 +200,65 @@ describe("eliminating redundant test execution", function() {
 });
 
 ```
+## Invariants
+
+Rspec-given also introduced the notion of "Invariants".  An `Invariant` lets you specify a condition which should always be true within the current scope.  For example:
+
+```
+
+    Given -> @stack = new MyStack @initialContents
+
+    Invariant -> @stack.empty? == (@stack.depth == 0)
+
+    describe "With some initial contents", ->
+        Given -> @initialContents = ["a", "b", "c"]
+        Then -> @stack.depth == 3
+
+        describe "Pop one", ->
+           When -> @result = @stack.pop
+           Then -> @stack.depth == 2
+
+        describe "Clear all", ->
+           When -> @stack.clear()
+           Then -> @stack.depth == 0
+
+    describe "With no contents", ->
+  		Then -> @stack.depth == 2
+
+    …etc…
+
+```
+
+The `Invariant` will be checked before each `Then` block. Note that invariants do not appear as their own tests; if an invariant fails it will be reported as a failure within the `Then` block.  Effectively, an `Invariant` defines an implicit `And` which gets prepended to each `Then` within the current scope.  Thus the above example is a DRY version of:
+
+```
+
+    Given -> @stack = new MyStack @initialContents
+
+    describe "With some initial contents", ->
+        Given -> @initialContents = ["a", "b", "c"]
+        Then -> @stack.depth == 3
+        And -> @stack.empty? == false
+
+        describe "Pop one", ->
+           When -> @result = @stack.pop
+           Then -> @stack.depth == 2
+	       And -> @stack.empty? == false
+
+        describe "Clear all", ->
+           When -> @stack.clear()
+           Then -> @stack.depth == 0
+           And -> @stack.empty? == true
+
+    describe "With no contents", ->
+  		Then -> @stack.depth == 0
+  		And -> @stack.empty? == true
+
+    …etc…
+
+```
+
+except that the `Invariant` is tested before each `Then` rather than after.
 
 # "it"-style test labels
 
