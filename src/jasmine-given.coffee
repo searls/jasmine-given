@@ -44,6 +44,16 @@ site: https://github.com/searls/jasmine-given
     afterEach ->
       whenList.pop()
 
+  invariantList = []
+
+  root.Invariant = ->
+    mostRecentlyUsed = root.Invariant
+    b = getBlock(arguments)
+    beforeEach ->
+      invariantList.push b
+    afterEach ->
+      invariantList.pop()
+
   getBlock = (thing) ->
     setupFunction = o(thing).firstThat (arg) -> o(arg).isFunction()
     assignResultTo = o(thing).firstThat (arg) -> o(arg).isString()
@@ -67,6 +77,7 @@ site: https://github.com/searls/jasmine-given
     it "then #{label ? stringifyExpectation(expectations)}", ->
       block() for block in (whenList ? [])
       i = 0
+      expectations = invariantList.concat(expectations)
       while i < expectations.length
         expect(expectations[i]).not.toHaveReturnedFalseFromThen jasmine.getEnv().currentSpec, i + 1
         i++
