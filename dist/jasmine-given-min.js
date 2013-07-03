@@ -1,5 +1,5 @@
 /*
-jasmine-given 2.0.0
+jasmine-given 2.1.0
 Adds a Given-When-Then DSL to jasmine as an alternative style for specs
 site: https://github.com/searls/jasmine-given
 */
