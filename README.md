@@ -76,7 +76,7 @@ describe("assigning stuff to variables", function() {
 ## Execution order: Givens then Whens then Thens
 
 The execution order for executing a `Then` is to execute all preceding `Given` blocks
-from the outside in, and next all the preceeding `When` blocks from the outside in, and
+from the outside in, and next all the preceding `When` blocks from the outside in, and
 then the `Then`.  This means that a later `Given` can affect an earlier `When`!
 While this may seem odd at first glance, it can DRY up your specs, especially if
 you are testing a series of `When` steps whose final outcome depends on an
@@ -106,7 +106,7 @@ initial condition.  For example:
                 Given -> user.isExpert = true
                 Then -> feedback_message.isEmpty()
 ```
-For the final three `Then`s, the exeuction order is:
+For the final three `Then`s, the execution order is:
 
 ```
        Given -> user
