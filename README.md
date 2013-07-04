@@ -223,7 +223,7 @@ Rspec-given also introduced the notion of "Invariants".  An `Invariant` lets you
            Then -> @stack.depth == 0
 
     describe "With no contents", ->
-  		Then -> @stack.depth == 2
+      Then -> @stack.depth == 2
 
     …etc…
 
@@ -243,7 +243,7 @@ The `Invariant` will be checked before each `Then` block. Note that invariants d
         describe "Pop one", ->
            When -> @result = @stack.pop
            Then -> @stack.depth == 2
-	       And -> @stack.empty? == false
+         And -> @stack.empty? == false
 
         describe "Clear all", ->
            When -> @stack.clear()
@@ -251,8 +251,8 @@ The `Invariant` will be checked before each `Then` block. Note that invariants d
            And -> @stack.empty? == true
 
     describe "With no contents", ->
-  		Then -> @stack.depth == 0
-  		And -> @stack.empty? == true
+      Then -> @stack.depth == 0
+      And -> @stack.empty? == true
 
     …etc…
 

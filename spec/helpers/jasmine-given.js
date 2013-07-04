@@ -1,15 +1,18 @@
-/* jasmine-given - 2.1.0
- * Adds a Given-When-Then DSL to jasmine as an alternative style for specs
- * https://github.com/searls/jasmine-given
- */
+
+/*
+jasmine-given 2.1.0
+Adds a Given-When-Then DSL to jasmine as an alternative style for specs
+site: https://github.com/searls/jasmine-given
+*/
+
+
 (function() {
+
   (function(jasmine) {
     var getBlock, invariantList, mostRecentExpectations, mostRecentlyUsed, o, root, stringifyExpectation, whenList;
-
     mostRecentlyUsed = null;
     stringifyExpectation = function(expectation) {
       var matches;
-
       matches = expectation.toString().replace(/\n/g, '').match(/function\s?\(\)\s?{\s*(return\s+)?(.*?)(;)?\s*}/i);
       if (matches && matches.length >= 3) {
         return matches[2];
@@ -20,19 +23,16 @@
     beforeEach(function() {
       return this.addMatchers({
         toHaveReturnedFalseFromThen: function(context, n) {
-          var e, exception, result;
-
+          var exception, result;
           result = false;
           exception = void 0;
           try {
             result = this.actual.call(context);
-          } catch (_error) {
-            e = _error;
+          } catch (e) {
             exception = e;
           }
           this.message = function() {
             var msg;
-
             msg = "Then clause " + (n > 1 ? " #" + n : "") + " `" + (stringifyExpectation(this.actual)) + "` failed by ";
             if (exception) {
               msg += "throwing: " + exception.toString();
@@ -53,7 +53,6 @@
     whenList = [];
     root.When = function() {
       var b;
-
       mostRecentlyUsed = root.When;
       b = getBlock(arguments);
       beforeEach(function() {
@@ -66,7 +65,6 @@
     invariantList = [];
     root.Invariant = function() {
       var b;
-
       mostRecentlyUsed = root.Invariant;
       b = getBlock(arguments);
       beforeEach(function() {
@@ -78,7 +76,6 @@
     };
     getBlock = function(thing) {
       var assignResultTo, setupFunction;
-
       setupFunction = o(thing).firstThat(function(arg) {
         return o(arg).isFunction();
       });
@@ -87,7 +84,6 @@
       });
       return function() {
         var context, result;
-
         context = jasmine.getEnv().currentSpec;
         result = setupFunction.call(context);
         if (assignResultTo) {
@@ -102,7 +98,6 @@
     mostRecentExpectations = null;
     root.Then = function() {
       var expectationFunction, expectations, label;
-
       label = o(arguments).firstThat(function(arg) {
         return o(arg).isString();
       });
@@ -113,7 +108,6 @@
       mostRecentExpectations = expectations = [expectationFunction];
       it("then " + (label != null ? label : stringifyExpectation(expectations)), function() {
         var block, i, _i, _len, _ref, _results;
-
         _ref = whenList != null ? whenList : [];
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           block = _ref[_i];
@@ -151,7 +145,6 @@
         },
         firstThat: function(test) {
           var i;
-
           i = 0;
           while (i < thing.length) {
             if (test(thing[i]) === true) {

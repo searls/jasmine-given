@@ -1,14 +1,20 @@
 {
   "name": "jasmine-given",
-  "description": "A Given-When-Then DSL for Jasmine",
   "version": "2.1.0",
+  "description": "Adds a Given-When-Then DSL to jasmine as an alternative style for specs",
+  "homepage": "https://github.com/searls/jasmine-given",
+  "author": {
+    "name": "Justin Searls",
+    "company": "Test Double, LLC"
+  },
+  "dependencies": {
+    "https://github.com/pivotal/jasmine": "Any",
+    "lineman": "~0.11.0"
+  },
   "keywords": [
     "jasmine",
     "bdd"
   ],
-  "dependencies": {
-    "https://github.com/pivotal/jasmine": "Any"
-  },
   "bugs": {
     "web": "https://github.com/searls/jasmine-given/issues"
   },
@@ -23,11 +29,5 @@
       "name": "Apache License 2.0",
       "url": "http://www.apache.org/licenses/LICENSE-2.0"
     }
-  ],
-  "homepage": "https://github.com/searls/jasmine-given",
-  "maintainers":[ {
-     "name": "Justin Searls",
-     "email": "searls@gmail.com",
-     "web": "http://about.me/searls"
-  }]
+  ]
 }
