@@ -8,7 +8,6 @@
     "company": "Test Double, LLC"
   },
   "dependencies": {
-    "https://github.com/pivotal/jasmine": "Any",
     "lineman": "~0.11.0"
   },
   "keywords": [
