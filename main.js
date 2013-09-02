@@ -1,3 +1,3 @@
 require('coffee-script')
-require('minijasminenode')
+if(!global.jasmine) { require('minijasminenode') }
 require('./app/js/jasmine-given')
