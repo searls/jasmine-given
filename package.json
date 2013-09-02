@@ -22,12 +22,10 @@
   "bugs": {
     "web": "https://github.com/searls/jasmine-given/issues"
   },
-  "repositories": [
-    {
-      "type": "git",
-      "url": "https://github.com/searls/jasmine-given.git"
-    }
-  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/searls/jasmine-given.git"
+  },
   "licenses": [
     {
       "name": "Apache License 2.0",
