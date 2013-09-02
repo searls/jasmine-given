@@ -7,8 +7,13 @@
     "name": "Justin Searls",
     "company": "Test Double, LLC"
   },
+  "main": "main.js",
   "dependencies": {
-    "lineman": "~0.11.0"
+    "coffee-script": "~ 1.6.3",
+    "minijasminenode": "~0.2.4"
+  },
+  "devDependencies": {
+    "lineman": ">=0.11.0"
   },
   "keywords": [
     "jasmine",
