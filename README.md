@@ -271,3 +271,16 @@ Or, perhaps you are using a collection of `Then` and `And` statements to express
         And -> @ajax_spy.mostRecentCall.args[0].url == "/items"
         And -> @ajax_spy.mostRecentCall.args[0].data.item.user_id == userID
         And -> @ajax_spy.mostRecentCall.args[0].data.item.name == itemName
+
+# Using with Node.js
+
+To use this helper with Jasmine under Node.js, simply add it to your package.json with
+
+``` bash
+$ npm install jasmine-given --save-dev
+```
+
+And then from your spec (or in a spec helper), `require('jasmine-given')`. Be
+sure that it's loaded after jasmine itself is added to the `global` object, or else
+it will load `minijasminenode` which will, in turn, load jasmine
+into `global` for you (which you may not be intending).
