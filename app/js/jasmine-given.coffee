@@ -63,13 +63,13 @@
 
   mostRecentExpectations = null
 
-  root.Then =  ->
-    label = o(arguments).firstThat (arg) -> o(arg).isString()
-    expectationFunction = o(arguments).firstThat (arg) -> o(arg).isFunction()
+  declareJasineSpec = (specArgs, itFunction = it) ->
+    label = o(specArgs).firstThat (arg) -> o(arg).isString()
+    expectationFunction = o(specArgs).firstThat (arg) -> o(arg).isFunction()
     mostRecentlyUsed = root.subsequentThen
-    mostRecentExpectations = expectations = [ expectationFunction ]
+    mostRecentExpectations = expectations = [expectationFunction]
 
-    it "then #{label ? stringifyExpectation(expectations)}", ->
+    itFunction "then #{label ? stringifyExpectation(expectations)}", ->
       block() for block in (whenList ? [])
       i = 0
       expectations = invariantList.concat(expectations)
@@ -77,7 +77,14 @@
         expect(expectations[i]).not.toHaveReturnedFalseFromThen jasmine.getEnv().currentSpec, i + 1
         i++
 
-    Then: subsequentThen, And: subsequentThen
+    Then: subsequentThen
+    And: subsequentThen
+
+  root.Then = ->
+    declareJasineSpec(arguments)
+
+  root.Then.only = ->
+    declareJasineSpec(arguments, it.only)
 
   root.subsequentThen = (additionalExpectation) ->
     mostRecentExpectations.push additionalExpectation

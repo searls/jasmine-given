@@ -124,4 +124,11 @@ describe "jasmine-given implementation", ->
         it "failed", ->
           expect(passed).toBe(true)
 
+  describe "support for jasmine-only style `Then.only` blocks", ->
+    Given -> @expectationFunction = jasmine.createSpy('my expectation')
+    Given -> spyOn(it, 'only')
+    When -> Then.only(@expectationFunction)
+    Then -> expect(it.only).toHaveBeenCalledWith jasmine.any(String), jasmine.argThat (arg) =>
+      arg()
+      @expectationFunction.calls.length == 1
 
