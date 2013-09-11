@@ -124,6 +124,13 @@ describe "jasmine-given implementation", ->
         it "failed", ->
           expect(passed).toBe(true)
 
+
+  describe 'a failing Invariant will fail a test', ->
+    Invariant -> false
+    describe 'nested thing', ->
+      Then -> jasmine.getEnv().currentSpec.results.failedCount == 1
+      And -> jasmine.getEnv().currentSpec.results_ = new jasmine.NestedResults()
+
   describe "support for jasmine-only style `Then.only` blocks", ->
     Given -> @expectationFunction = jasmine.createSpy('my expectation')
     Given -> spyOn(it, 'only')

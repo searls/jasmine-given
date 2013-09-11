@@ -41,11 +41,10 @@
 
   invariantList = []
 
-  root.Invariant = ->
+  root.Invariant = (invariantBehavior) ->
     mostRecentlyUsed = root.Invariant
-    b = getBlock(arguments)
     beforeEach ->
-      invariantList.push b
+      invariantList.push(invariantBehavior)
     afterEach ->
       invariantList.pop()
 
@@ -72,7 +71,7 @@
     itFunction "then #{label ? stringifyExpectation(expectations)}", ->
       block() for block in (whenList ? [])
       for expectation, i in invariantList.concat(expectations)
-        expect(expectation).not.toHaveReturnedFalseFromThen jasmine.getEnv().currentSpec, i + 1
+        expect(expectation).not.toHaveReturnedFalseFromThen(jasmine.getEnv().currentSpec, i + 1)
 
     Then: subsequentThen
     And: subsequentThen
