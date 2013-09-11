@@ -71,11 +71,8 @@
 
     itFunction "then #{label ? stringifyExpectation(expectations)}", ->
       block() for block in (whenList ? [])
-      i = 0
-      expectations = invariantList.concat(expectations)
-      while i < expectations.length
-        expect(expectations[i]).not.toHaveReturnedFalseFromThen jasmine.getEnv().currentSpec, i + 1
-        i++
+      for expectation, i in invariantList.concat(expectations)
+        expect(expectation).not.toHaveReturnedFalseFromThen jasmine.getEnv().currentSpec, i + 1
 
     Then: subsequentThen
     And: subsequentThen
