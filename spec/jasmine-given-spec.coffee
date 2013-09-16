@@ -144,18 +144,27 @@ describe "jasmine-given implementation", ->
     describe "Then blocks", ->
       Given -> spyOn(window, 'it')
 
-      context "no-arg Then function", ->
+      context "no-arg", ->
         When -> Then ->
         Then -> expect(it).toHaveBeenCalledWith jasmine.any(String), jasmine.argThat (func) =>
           func.length == 0
 
-      context "done-ful Then function", ->
+      context "done-ful", ->
         When -> Then (done) ->
         Then -> expect(it).toHaveBeenCalledWith jasmine.any(String), jasmine.argThat (func) =>
           func.length == 1
 
+    describe "Given blocks", ->
+      Given -> spyOn(window, 'beforeEach')
 
+      context "no-arg", ->
+        When -> Given ->
+        Then -> expect(beforeEach).toHaveBeenCalledWith jasmine.argThat (func) =>
+          func.length == 0
 
-
+      context "done-ful", ->
+        When -> Given (done) ->
+        Then -> expect(beforeEach).toHaveBeenCalledWith jasmine.argThat (func) =>
+          func.length == 1
 
 

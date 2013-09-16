@@ -35,7 +35,7 @@
     mostRecentlyUsed = root.When
     b = getBlock(arguments)
     beforeEach ->
-      whenList.push b
+      whenList.push(b)
     afterEach ->
       whenList.pop()
 
@@ -51,9 +51,9 @@
   getBlock = (thing) ->
     setupFunction = o(thing).firstThat (arg) -> o(arg).isFunction()
     assignResultTo = o(thing).firstThat (arg) -> o(arg).isString()
-    ->
+    doneWrapperFor setupFunction, (done) ->
       context = jasmine.getEnv().currentSpec
-      result = setupFunction.call(context)
+      result = setupFunction.call(context, done)
       if assignResultTo
         unless context[assignResultTo]
           context[assignResultTo] = result
@@ -76,8 +76,8 @@
     Then: subsequentThen
     And: subsequentThen
 
-  doneWrapperFor = (expectationFunction, toWrap) ->
-    if expectationFunction.length == 0
+  doneWrapperFor = (func, toWrap) ->
+    if func.length == 0
       -> toWrap()
     else
       (done) -> toWrap(done)
