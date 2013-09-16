@@ -1,28 +1,28 @@
-/* jasmine-given - 2.2.0
+/* jasmine-given - 2.3.0
  * Adds a Given-When-Then DSL to jasmine as an alternative style for specs
  * https://github.com/searls/jasmine-given
  */
 (function() {
   (function(jasmine) {
-    var declareJasineSpec, getBlock, invariantList, mostRecentExpectations, mostRecentlyUsed, o, root, stringifyExpectation, whenList;
+    var declareJasineSpec, doneWrapperFor, getBlock, invariantList, mostRecentExpectations, mostRecentlyUsed, o, root, stringifyExpectation, whenList;
     mostRecentlyUsed = null;
     stringifyExpectation = function(expectation) {
       var matches;
-      matches = expectation.toString().replace(/\n/g, '').match(/function\s?\(\)\s?{\s*(return\s+)?(.*?)(;)?\s*}/i);
+      matches = expectation.toString().replace(/\n/g, '').match(/function\s?\(.*\)\s?{\s*(return\s+)?(.*?)(;)?\s*}/i);
       if (matches && matches.length >= 3) {
-        return matches[2];
+        return matches[2].replace(/\s+/g, ' ');
       } else {
         return "";
       }
     };
     beforeEach(function() {
       return this.addMatchers({
-        toHaveReturnedFalseFromThen: function(context, n) {
+        toHaveReturnedFalseFromThen: function(context, n, done) {
           var e, exception, result;
           result = false;
           exception = void 0;
           try {
-            result = this.actual.call(context);
+            result = this.actual.call(context, done);
           } catch (_error) {
             e = _error;
             exception = e;
@@ -76,10 +76,10 @@
       assignResultTo = o(thing).firstThat(function(arg) {
         return o(arg).isString();
       });
-      return function() {
+      return doneWrapperFor(setupFunction, function(done) {
         var context, result;
         context = jasmine.getEnv().currentSpec;
-        result = setupFunction.call(context);
+        result = setupFunction.call(context, done);
         if (assignResultTo) {
           if (!context[assignResultTo]) {
             return context[assignResultTo] = result;
@@ -87,7 +87,7 @@
             throw new Error("Unfortunately, the variable '" + assignResultTo + "' is already assigned to: " + context[assignResultTo]);
           }
         }
-      };
+      });
     };
     mostRecentExpectations = null;
     declareJasineSpec = function(specArgs, itFunction) {
@@ -103,7 +103,7 @@
       });
       mostRecentlyUsed = root.subsequentThen;
       mostRecentExpectations = expectations = [expectationFunction];
-      itFunction("then " + (label != null ? label : stringifyExpectation(expectations)), function() {
+      itFunction("then " + (label != null ? label : stringifyExpectation(expectations)), doneWrapperFor(expectationFunction, function(done) {
         var block, expectation, i, _i, _j, _len, _len1, _ref, _ref1, _results;
         _ref = whenList != null ? whenList : [];
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -114,14 +114,25 @@
         _results = [];
         for (i = _j = 0, _len1 = _ref1.length; _j < _len1; i = ++_j) {
           expectation = _ref1[i];
-          _results.push(expect(expectation).not.toHaveReturnedFalseFromThen(jasmine.getEnv().currentSpec, i + 1));
+          _results.push(expect(expectation).not.toHaveReturnedFalseFromThen(jasmine.getEnv().currentSpec, i + 1, done));
         }
         return _results;
-      });
+      }));
       return {
         Then: subsequentThen,
         And: subsequentThen
       };
+    };
+    doneWrapperFor = function(func, toWrap) {
+      if (func.length === 0) {
+        return function() {
+          return toWrap();
+        };
+      } else {
+        return function(done) {
+          return toWrap(done);
+        };
+      }
     };
     root.Then = function() {
       return declareJasineSpec(arguments);
