@@ -139,3 +139,23 @@ describe "jasmine-given implementation", ->
       arg()
       @expectationFunction.calls.length == 1
 
+
+  describe "support for done() style blocks", ->
+    describe "Then blocks", ->
+      Given -> spyOn(window, 'it')
+
+      context "no-arg Then function", ->
+        When -> Then ->
+        Then -> expect(it).toHaveBeenCalledWith jasmine.any(String), jasmine.argThat (func) =>
+          func.length == 0
+
+      context "done-ful Then function", ->
+        When -> Then (done) ->
+        Then -> expect(it).toHaveBeenCalledWith jasmine.any(String), jasmine.argThat (func) =>
+          func.length == 1
+
+
+
+
+
+

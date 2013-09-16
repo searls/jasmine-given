@@ -3,15 +3,15 @@
   mostRecentlyUsed = null
 
   stringifyExpectation = (expectation) ->
-    matches = expectation.toString().replace(/\n/g,'').match(/function\s?\(\)\s?{\s*(return\s+)?(.*?)(;)?\s*}/i)
-    if matches and matches.length >= 3 then matches[2] else ""
+    matches = expectation.toString().replace(/\n/g,'').match(/function\s?\(.*\)\s?{\s*(return\s+)?(.*?)(;)?\s*}/i)
+    if matches and matches.length >= 3 then matches[2].replace(/\s+/g, ' ') else ""
 
   beforeEach ->
-    @addMatchers toHaveReturnedFalseFromThen: (context, n) ->
+    @addMatchers toHaveReturnedFalseFromThen: (context, n, done) ->
       result = false
       exception = undefined
       try
-        result = @actual.call(context)
+        result = @actual.call(context, done)
       catch e
         exception = e
       @message = ->
@@ -68,13 +68,20 @@
     mostRecentlyUsed = root.subsequentThen
     mostRecentExpectations = expectations = [expectationFunction]
 
-    itFunction "then #{label ? stringifyExpectation(expectations)}", ->
+    itFunction "then #{label ? stringifyExpectation(expectations)}", doneWrapperFor(expectationFunction, (done) ->
       block() for block in (whenList ? [])
       for expectation, i in invariantList.concat(expectations)
-        expect(expectation).not.toHaveReturnedFalseFromThen(jasmine.getEnv().currentSpec, i + 1)
-
+        expect(expectation).not.toHaveReturnedFalseFromThen(jasmine.getEnv().currentSpec, i + 1, done)
+    )
     Then: subsequentThen
     And: subsequentThen
+
+  doneWrapperFor = (expectationFunction, toWrap) ->
+    if expectationFunction.length == 0
+      -> toWrap()
+    else
+      (done) -> toWrap(done)
+
 
   root.Then = ->
     declareJasineSpec(arguments)
