@@ -20,7 +20,7 @@
     "bdd"
   ],
   "bugs": {
-    "web": "https://github.com/searls/jasmine-given/issues"
+    "url": "https://github.com/searls/jasmine-given/issues"
   },
   "repository": {
     "type": "git",
