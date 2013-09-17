@@ -4,7 +4,7 @@
  */
 (function() {
   (function(jasmine) {
-    var declareJasineSpec, doneWrapperFor, getBlock, invariantList, mostRecentExpectations, mostRecentlyUsed, o, root, stringifyExpectation, whenList;
+    var declareJasmineSpec, doneWrapperFor, getBlock, invariantList, mostRecentExpectations, mostRecentlyUsed, o, root, stringifyExpectation, whenList;
     mostRecentlyUsed = null;
     stringifyExpectation = function(expectation) {
       var matches;
@@ -90,7 +90,7 @@
       });
     };
     mostRecentExpectations = null;
-    declareJasineSpec = function(specArgs, itFunction) {
+    declareJasmineSpec = function(specArgs, itFunction) {
       var expectationFunction, expectations, label;
       if (itFunction == null) {
         itFunction = it;
@@ -135,10 +135,10 @@
       }
     };
     root.Then = function() {
-      return declareJasineSpec(arguments);
+      return declareJasmineSpec(arguments);
     };
     root.Then.only = function() {
-      return declareJasineSpec(arguments, it.only);
+      return declareJasmineSpec(arguments, it.only);
     };
     root.subsequentThen = function(additionalExpectation) {
       mostRecentExpectations.push(additionalExpectation);

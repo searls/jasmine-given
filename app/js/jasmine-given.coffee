@@ -62,7 +62,7 @@
 
   mostRecentExpectations = null
 
-  declareJasineSpec = (specArgs, itFunction = it) ->
+  declareJasmineSpec = (specArgs, itFunction = it) ->
     label = o(specArgs).firstThat (arg) -> o(arg).isString()
     expectationFunction = o(specArgs).firstThat (arg) -> o(arg).isFunction()
     mostRecentlyUsed = root.subsequentThen
@@ -84,10 +84,10 @@
 
 
   root.Then = ->
-    declareJasineSpec(arguments)
+    declareJasmineSpec(arguments)
 
   root.Then.only = ->
-    declareJasineSpec(arguments, it.only)
+    declareJasmineSpec(arguments, it.only)
 
   root.subsequentThen = (additionalExpectation) ->
     mostRecentExpectations.push additionalExpectation
