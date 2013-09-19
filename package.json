@@ -1,6 +1,6 @@
 {
   "name": "jasmine-given",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "Adds a Given-When-Then DSL to jasmine as an alternative style for specs",
   "homepage": "https://github.com/searls/jasmine-given",
   "author": {

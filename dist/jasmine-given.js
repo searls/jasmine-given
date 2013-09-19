@@ -1,45 +1,13 @@
-/* jasmine-given - 2.3.0
+/* jasmine-given - 2.4.0
  * Adds a Given-When-Then DSL to jasmine as an alternative style for specs
  * https://github.com/searls/jasmine-given
  */
 (function() {
   (function(jasmine) {
-    var declareJasmineSpec, doneWrapperFor, getBlock, invariantList, mostRecentExpectations, mostRecentlyUsed, o, root, stringifyExpectation, whenList;
+    var additionalInsightsForErrorMessage, apparentReferenceError, attemptedEquality, comparisonInsight, declareJasmineSpec, deepEqualsNotice, doneWrapperFor, evalInContextOfSpec, finalStatementFrom, getBlock, invariantList, mostRecentExpectations, mostRecentlyUsed, o, root, stringifyExpectation, wasComparison, whenList;
     mostRecentlyUsed = null;
-    stringifyExpectation = function(expectation) {
-      var matches;
-      matches = expectation.toString().replace(/\n/g, '').match(/function\s?\(.*\)\s?{\s*(return\s+)?(.*?)(;)?\s*}/i);
-      if (matches && matches.length >= 3) {
-        return matches[2].replace(/\s+/g, ' ');
-      } else {
-        return "";
-      }
-    };
     beforeEach(function() {
-      return this.addMatchers({
-        toHaveReturnedFalseFromThen: function(context, n, done) {
-          var e, exception, result;
-          result = false;
-          exception = void 0;
-          try {
-            result = this.actual.call(context, done);
-          } catch (_error) {
-            e = _error;
-            exception = e;
-          }
-          this.message = function() {
-            var msg;
-            msg = "Then clause " + (n > 1 ? " #" + n : "") + " `" + (stringifyExpectation(this.actual)) + "` failed by ";
-            if (exception) {
-              msg += "throwing: " + exception.toString();
-            } else {
-              msg += "returning false";
-            }
-            return msg;
-          };
-          return result === false;
-        }
-      });
+      return this.addMatchers(jasmine._given.matchers);
     });
     root = this;
     root.Given = function() {
@@ -148,7 +116,7 @@
     root.And = function() {
       return mostRecentlyUsed.apply(this, jasmine.util.argsToArray(arguments));
     };
-    return o = function(thing) {
+    o = function(thing) {
       return {
         isFunction: function() {
           return Object.prototype.toString.call(thing) === "[object Function]";
@@ -168,6 +136,104 @@
           return void 0;
         }
       };
+    };
+    jasmine._given = {
+      matchers: {
+        toHaveReturnedFalseFromThen: function(context, n, done) {
+          var e, exception, result;
+          result = false;
+          exception = void 0;
+          try {
+            result = this.actual.call(context, done);
+          } catch (_error) {
+            e = _error;
+            exception = e;
+          }
+          this.message = function() {
+            var msg, stringyExpectation;
+            stringyExpectation = stringifyExpectation(this.actual);
+            msg = "Then clause" + (n > 1 ? " #" + n : "") + " `" + stringyExpectation + "` failed by ";
+            if (exception) {
+              msg += "throwing: " + exception.toString();
+            } else {
+              msg += "returning false";
+            }
+            msg += additionalInsightsForErrorMessage(stringyExpectation);
+            return msg;
+          };
+          return result === false;
+        }
+      }
+    };
+    stringifyExpectation = function(expectation) {
+      var matches;
+      matches = expectation.toString().replace(/\n/g, '').match(/function\s?\(.*\)\s?{\s*(return\s+)?(.*?)(;)?\s*}/i);
+      if (matches && matches.length >= 3) {
+        return matches[2].replace(/\s+/g, ' ');
+      } else {
+        return "";
+      }
+    };
+    additionalInsightsForErrorMessage = function(expectationString) {
+      var comparison, expectation;
+      expectation = finalStatementFrom(expectationString);
+      if (comparison = wasComparison(expectation)) {
+        return comparisonInsight(expectation, comparison);
+      } else {
+        return "";
+      }
+    };
+    finalStatementFrom = function(expectationString) {
+      var multiStatement;
+      if (multiStatement = expectationString.match(/.*return (.*)/)) {
+        return multiStatement[multiStatement.length - 1];
+      } else {
+        return expectationString;
+      }
+    };
+    wasComparison = function(expectation) {
+      var comparator, comparison, left, right, s;
+      if (comparison = expectation.match(/(.*) (===|!==|==|!=|>|>=|<|<=) (.*)/)) {
+        s = comparison[0], left = comparison[1], comparator = comparison[2], right = comparison[3];
+        return {
+          left: left,
+          comparator: comparator,
+          right: right
+        };
+      }
+    };
+    comparisonInsight = function(expectation, comparison) {
+      var left, msg, right;
+      left = evalInContextOfSpec(comparison.left);
+      right = evalInContextOfSpec(comparison.right);
+      if (apparentReferenceError(left) && apparentReferenceError(right)) {
+        return "";
+      }
+      msg = "\n\nThis comparison was detected:\n  " + expectation + "\n  " + left + " " + comparison.comparator + " " + right;
+      if (attemptedEquality(left, right, comparison.comparator)) {
+        msg += "\n\n" + (deepEqualsNotice(comparison.left, comparison.right));
+      }
+      return msg;
+    };
+    apparentReferenceError = function(result) {
+      return /^<Error: "ReferenceError/.test(result);
+    };
+    evalInContextOfSpec = function(operand) {
+      var e;
+      try {
+        return (function() {
+          return eval(operand);
+        }).call(jasmine.getEnv().currentSpec);
+      } catch (_error) {
+        e = _error;
+        return "<Error: \"" + ((e != null ? typeof e.message === "function" ? e.message() : void 0 : void 0) || e) + "\">";
+      }
+    };
+    attemptedEquality = function(left, right, comparator) {
+      return (comparator === "==" || comparator === "===") && jasmine.getEnv().equals_(left, right);
+    };
+    return deepEqualsNotice = function(left, right) {
+      return "However, these items are deeply equal! Try an expectation like this instead:\n  expect(" + left + ").toEqual(" + right + ")";
     };
   })(jasmine);
 
