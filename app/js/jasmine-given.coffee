@@ -6,23 +6,27 @@
     matches = expectation.toString().replace(/\n/g,'').match(/function\s?\(.*\)\s?{\s*(return\s+)?(.*?)(;)?\s*}/i)
     if matches and matches.length >= 3 then matches[2].replace(/\s+/g, ' ') else ""
 
-  beforeEach ->
-    @addMatchers toHaveReturnedFalseFromThen: (context, n, done) ->
-      result = false
-      exception = undefined
-      try
-        result = @actual.call(context, done)
-      catch e
-        exception = e
-      @message = ->
-        msg = "Then clause #{if n > 1 then " ##{n}" else ""} `#{stringifyExpectation(@actual)}` failed by "
-        if exception
-          msg += "throwing: " + exception.toString()
-        else
-          msg += "returning false"
-        msg
+  jasmine._given =
+    matchers:
+      toHaveReturnedFalseFromThen: (context, n, done) ->
+        result = false
+        exception = undefined
+        try
+          result = @actual.call(context, done)
+        catch e
+          exception = e
+        @message = ->
+          msg = "Then clause#{if n > 1 then " ##{n}" else ""} `#{stringifyExpectation(@actual)}` failed by "
+          if exception
+            msg += "throwing: " + exception.toString()
+          else
+            msg += "returning false"
+          msg
 
-      result is false
+        result == false
+
+  beforeEach ->
+    @addMatchers(jasmine._given.matchers)
   root = @
 
   root.Given = ->
