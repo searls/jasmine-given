@@ -2,29 +2,6 @@
 
   mostRecentlyUsed = null
 
-  stringifyExpectation = (expectation) ->
-    matches = expectation.toString().replace(/\n/g,'').match(/function\s?\(.*\)\s?{\s*(return\s+)?(.*?)(;)?\s*}/i)
-    if matches and matches.length >= 3 then matches[2].replace(/\s+/g, ' ') else ""
-
-  jasmine._given =
-    matchers:
-      toHaveReturnedFalseFromThen: (context, n, done) ->
-        result = false
-        exception = undefined
-        try
-          result = @actual.call(context, done)
-        catch e
-          exception = e
-        @message = ->
-          msg = "Then clause#{if n > 1 then " ##{n}" else ""} `#{stringifyExpectation(@actual)}` failed by "
-          if exception
-            msg += "throwing: " + exception.toString()
-          else
-            msg += "returning false"
-          msg
-
-        result == false
-
   beforeEach ->
     @addMatchers(jasmine._given.matchers)
   root = @
@@ -114,5 +91,81 @@
         return thing[i]  if test(thing[i]) is true
         i++
       return undefined
+
+  jasmine._given =
+    matchers:
+      toHaveReturnedFalseFromThen: (context, n, done) ->
+        result = false
+        exception = undefined
+        try
+          result = @actual.call(context, done)
+        catch e
+          exception = e
+        @message = ->
+          stringyExpectation = stringifyExpectation(@actual)
+          msg = "Then clause#{if n > 1 then " ##{n}" else ""} `#{stringyExpectation}` failed by "
+          if exception
+            msg += "throwing: " + exception.toString()
+          else
+            msg += "returning false"
+          msg += additionalInsightsForErrorMessage(stringyExpectation)
+
+          msg
+
+        result == false
+
+  stringifyExpectation = (expectation) ->
+    matches = expectation.toString().replace(/\n/g,'').match(/function\s?\(.*\)\s?{\s*(return\s+)?(.*?)(;)?\s*}/i)
+    if matches and matches.length >= 3 then matches[2].replace(/\s+/g, ' ') else ""
+
+  additionalInsightsForErrorMessage = (expectationString) ->
+    expectation = finalStatementFrom(expectationString)
+    if comparison = wasComparison(expectation)
+      comparisonInsight(expectation, comparison)
+    else
+      ""
+
+  finalStatementFrom = (expectationString) ->
+    if multiStatement = expectationString.match(/.*return (.*)/)
+      multiStatement[multiStatement.length - 1]
+    else
+      expectationString
+
+  wasComparison = (expectation) ->
+    if comparison = expectation.match(/(.*) (===|!==|==|!=|>|>=|<|<=) (.*)/)
+      [s, left, comparator, right] = comparison
+      {left, comparator, right}
+
+  comparisonInsight = (expectation, comparison) ->
+    left = evalInContextOfSpec(comparison.left)
+    right = evalInContextOfSpec(comparison.right)
+    return "" if apparentReferenceError(left) && apparentReferenceError(right)
+
+    msg = """
+          \n
+          This comparison was detected:
+            #{expectation}
+            #{left} #{comparison.comparator} #{right}
+          """
+    msg += "\n\n#{deepEqualsNotice(comparison.left, comparison.right)}" if attemptedEquality(left, right, comparison.comparator)
+    msg
+
+  apparentReferenceError = (result) ->
+    /^<Error: "ReferenceError/.test(result)
+
+  evalInContextOfSpec = (operand) ->
+    try
+      (-> eval(operand)).call(jasmine.getEnv().currentSpec)
+    catch e
+      "<Error: \"#{e?.message?() || e}\">"
+
+  attemptedEquality = (left, right, comparator) ->
+    (comparator == "==" || comparator == "===") && jasmine.getEnv().equals_(left, right)
+
+  deepEqualsNotice = (left, right) ->
+    """
+    However, these items are deeply equal! Try an expectation like this instead:
+      expect(#{left}).toEqual(#{right})
+    """
 
 ) jasmine

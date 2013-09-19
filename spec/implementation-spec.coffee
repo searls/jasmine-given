@@ -83,9 +83,68 @@ describe "jasmine-given implementation", ->
         context "simple threequals matcher", ->
           Given -> @a = -> 1
           Given -> @b = 3
-          Then -> expect(@context.message()).toEqual('Then clause `this.a() === this.b` failed by returning false')
+          Then -> expect(@context.message()).toEqual """
+                                                     Then clause `this.a() === this.b` failed by returning false
+
+                                                     This comparison was detected:
+                                                       this.a() === this.b
+                                                       1 === 3
+                                                     """
+
+        context "two deeply equal but not === things", ->
+          Given -> @a = -> [1]
+          Given -> @b = [1]
+          Then -> expect(@context.message()).toEqual """
+                                                     Then clause `this.a() === this.b` failed by returning false
+
+                                                     This comparison was detected:
+                                                       this.a() === this.b
+                                                       1 === 1
+
+                                                     However, these items are deeply equal! Try an expectation like this instead:
+                                                       expect(this.a()).toEqual(this.b)
+                                                     """
+
+
+        context "simple !== matcher", ->
+          Given -> @context = actual: -> @a() != @b
+          Given -> @a = -> 1
+          Given -> @b = 1
+          Then -> expect(@context.message()).toEqual """
+                                                     Then clause `this.a() !== this.b` failed by returning false
+
+                                                     This comparison was detected:
+                                                       this.a() !== this.b
+                                                       1 !== 1
+                                                     """
 
         context "a matcher that blows up", ->
           Given -> @a = -> throw 'Whoops'
           Given -> @b = 3
-          Then -> expect(@context.message()).toEqual('Then clause `this.a() === this.b` failed by throwing: Whoops')
+          Then -> expect(@context.message()).toEqual """
+                                                     Then clause `this.a() === this.b` failed by throwing: Whoops
+
+                                                     This comparison was detected:
+                                                       this.a() === this.b
+                                                       <Error: "Whoops"> === 3
+                                                     """
+
+        context "a final statement in a multi statement Then", ->
+          Given -> @context = actual: ->
+            "whatever other stuff in previous statements."
+            @a() == @b
+          Given -> @a = -> 1
+          Given -> @b = 3
+          Then -> expect(@context.message()).toEqual """
+                                                     Then clause `"whatever other stuff in previous statements."; return this.a() === this.b` failed by returning false
+
+                                                     This comparison was detected:
+                                                       this.a() === this.b
+                                                       1 === 3
+                                                     """
+
+        context "both sides will ReferenceError", ->
+          a = ->
+          b = 3
+          Given -> @context = actual: -> a() == b
+          Then -> expect(@context.message()).toEqual("Then clause `a() === b` failed by returning false")
