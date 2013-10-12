@@ -1,0 +1,8 @@
+{
+  "name": "jasmine-given",
+  "version": "2.0.0",
+  "main": "./dist/jasmine-given.js",
+  "dependencies": {
+    "jasmine": "latest"
+  }
+}
