@@ -34,19 +34,77 @@ describe "jasmine-given implementation", ->
       @expectationFunction.calls.length == 1
 
 
-  describe "support for done() style blocks", ->
+  describe "support for async done() style blocks", ->
     describe "Then blocks", ->
-      Given -> spyOn(window, 'it')
+      beforeEach ->
+        spyOn(window, 'it')
+        spyOn(window, 'beforeEach').andCallFake (f) -> f()
 
-      context "no-arg", ->
-        When -> Then ->
-        Then -> expect(it).toHaveBeenCalledWith jasmine.any(String), jasmine.argThat (func) =>
-          func.length == 0
+        @afterEaches = []
+        spyOn(window, 'afterEach').andCallFake (f) =>
+          @afterEaches.push(f)
 
-      context "done-ful", ->
-        When -> Then (done) ->
-        Then -> expect(it).toHaveBeenCalledWith jasmine.any(String), jasmine.argThat (func) =>
+      afterEach ->
+        afterEachAction() for afterEachAction in @afterEaches
+
+      describe "Then", ->
+        beforeEach ->
+          Then (done) ->
+        it '', -> expect(it).toHaveBeenCalledWith jasmine.any(String), jasmine.argThat (func) =>
           func.length == 1
+
+
+      describe "When", ->
+        beforeEach ->
+          @then = jasmine.createSpy("Then")
+
+        context "the when does not call its done()", ->
+          beforeEach ->
+            When (done) ->
+            Then(@then)
+          it '', ->
+            specImplementation = it.calls[0].args[1]
+            doneProvidedByJasmineRunner = jasmine.createSpy("done")
+            specImplementation(doneProvidedByJasmineRunner)
+            expect(@then).not.toHaveBeenCalled()
+            expect(doneProvidedByJasmineRunner).not.toHaveBeenCalled()
+
+        context "the when does indeed call its done()", ->
+          beforeEach ->
+            When (done) -> done()
+            Then(@then)
+          it '', ->
+            specImplementation = it.calls[0].args[1]
+            doneProvidedByJasmineRunner = jasmine.createSpy("done")
+            specImplementation(doneProvidedByJasmineRunner)
+            expect(@then).toHaveBeenCalled()
+            expect(doneProvidedByJasmineRunner).toHaveBeenCalled()
+
+        context "has a boatload of commands", ->
+          beforeEach ->
+            @callCount = 0
+
+            inc = (done) =>
+              @callCount++
+              done?()
+
+            Invariant (done) -> inc(done)
+            Invariant -> inc()
+            When (done) -> inc(done)
+            And -> inc()
+            Then -> inc()
+            And -> inc()
+            And (done) -> inc(done)
+            And -> inc()
+
+          it '', ->
+            specImplementation = it.calls[0].args[1]
+            doneProvidedByJasmineRunner = jasmine.createSpy("done")
+
+            specImplementation(doneProvidedByJasmineRunner)
+
+            expect(@callCount).toBe(8)
+            expect(doneProvidedByJasmineRunner).toHaveBeenCalled()
 
     describe "Given blocks", ->
       Given -> spyOn(window, 'beforeEach')
@@ -60,6 +118,8 @@ describe "jasmine-given implementation", ->
         When -> Given (done) ->
         Then -> expect(beforeEach).toHaveBeenCalledWith jasmine.argThat (func) =>
           func.length == 1
+
+
 
 
   describe "matchers", ->

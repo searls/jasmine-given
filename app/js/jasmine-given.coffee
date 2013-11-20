@@ -49,13 +49,17 @@
     mostRecentlyUsed = root.subsequentThen
     mostRecentExpectations = expectations = [expectationFunction]
 
-    itFunction "then #{label ? stringifyExpectation(expectations)}", doneWrapperFor(expectationFunction, (done) ->
-      block() for block in (whenList ? [])
-      for expectation, i in invariantList.concat(expectations)
-        expect(expectation).not.toHaveReturnedFalseFromThen(jasmine.getEnv().currentSpec, i + 1, done)
-    )
-    Then: subsequentThen
-    And: subsequentThen
+    itFunction "then #{label ? stringifyExpectation(expectations)}", (jasmineDone) ->
+      userCommands = [].concat(whenList, invariantList, wrapAsExpectations(expectations))
+      new Waterfall(userCommands, jasmineDone).flow()
+
+    return { Then: subsequentThen,  And: subsequentThen }
+
+  wrapAsExpectations = (expectations) ->
+    for expectation, i in expectations
+      do (expectation, i) ->
+        doneWrapperFor expectation, (maybeDone) ->
+          expect(expectation).not.toHaveReturnedFalseFromThen(jasmine.getEnv().currentSpec, i + 1, maybeDone)
 
   doneWrapperFor = (func, toWrap) ->
     if func.length == 0
@@ -167,5 +171,37 @@
     However, these items are deeply equal! Try an expectation like this instead:
       expect(#{left}).toEqual(#{right})
     """
+
+  class Waterfall
+    constructor: (functions = [], finalCallback) ->
+      @functions = functions.slice(0)
+      @finalCallback = finalCallback
+
+      @asyncCount = 0
+      for func in @functions
+        @asyncCount += 1 if func.length > 0
+
+    asyncTaskCompleted: =>
+      @asyncCount -= 1
+      @flow()
+
+    invokeFinalCallbackIfNecessary: =>
+      if @asyncCount == 0
+        @finalCallback?()
+        @finalCallback = undefined
+
+    flow: =>
+      return @invokeFinalCallbackIfNecessary() if @functions.length == 0
+
+      func = @functions.shift()
+
+      if func.length > 0
+        func(@asyncTaskCompleted)
+      else
+        func()
+        @flow()
+
+
+
 
 ) jasmine
