@@ -36,10 +36,25 @@ module.exports = (lineman) ->
 
             """
 
+  loadNpmTasks: ["grunt-jasmine-bundle"]
+
+  hooks:
+    loadNpmTasks:
+      afterLoad:
+        "grunt-jasmine-bundle": ->
+          grunt.renameTask("spec", "nodeSpec")
+
   removeTasks:
     common: ["less", "handlebars", "jst", "images:dev", "webfonts:dev", "pages:dev"]
     dev: ["server"]
     dist: ["cssmin", "images:dist", "webfonts:dist", "pages:dist"]
+
+  nodeSpec:
+    e2e:
+      minijasminenode:
+        showColors: true
+      helpers: "spec-e2e/helpers/**/*.{js,coffee}"
+      specs: "spec-e2e/**/*.{js,coffee}"
 
   concat:
     uncompressedDist:
