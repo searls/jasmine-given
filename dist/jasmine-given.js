@@ -1,4 +1,4 @@
-/* jasmine-given - 2.5.0
+/* jasmine-given - 2.5.1
  * Adds a Given-When-Then DSL to jasmine as an alternative style for specs
  * https://github.com/searls/jasmine-given
  */
