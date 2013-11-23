@@ -16,6 +16,7 @@
     "lineman": ">=0.18.0",
     "grunt": "~0.4.2",
     "grunt-jasmine-bundle": "0.0.3",
+    "testem": "~0.5.12",
     "grunt-write-bower-json": "0.0.1"
   },
   "keywords": [

@@ -7,3 +7,4 @@
 /generated
 
 .sass-cache
+/spec-e2e/tmp
