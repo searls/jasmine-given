@@ -29,8 +29,10 @@
       });
     };
     invariantList = [];
-    root.Invariant = function(invariantBehavior) {
+    root.Invariant = function() {
+      var invariantBehavior;
       mostRecentlyUsed = root.Invariant;
+      invariantBehavior = getBlock(arguments);
       beforeEach(function() {
         return invariantList.push(invariantBehavior);
       });

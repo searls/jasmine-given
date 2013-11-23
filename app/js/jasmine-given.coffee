@@ -22,8 +22,9 @@
 
   invariantList = []
 
-  root.Invariant = (invariantBehavior) ->
+  root.Invariant = ->
     mostRecentlyUsed = root.Invariant
+    invariantBehavior = getBlock(arguments)
     beforeEach ->
       invariantList.push(invariantBehavior)
     afterEach ->

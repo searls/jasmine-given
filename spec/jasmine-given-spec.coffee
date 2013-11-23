@@ -52,6 +52,7 @@ describe "jasmine-given CoffeeScript API", ->
       Then -> timesInvariantWasInvoked == 2
 
     context "following a Then", ->
+      Invariant -> expect(@meat).toContain('pork')
       Given -> @meat = 'pork'
       When -> @meat += 'muffin'
       Then -> @meat == 'porkmuffin'
