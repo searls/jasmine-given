@@ -3,7 +3,8 @@ root = global
 root.invariants =
   passingSpec: ->
     Invariant -> @result.code == 0
-    Invariant -> expect(@result.output).toContain """
+    Invariant -> @result.stderr == ""
+    Invariant -> expect(@result.stdout).toContain """
       # fail  0
 
       # ok

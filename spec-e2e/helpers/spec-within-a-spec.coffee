@@ -14,14 +14,11 @@ root.runSpec = (done, callback) ->
   grunt.util.spawn
     cmd: "node_modules/.bin/testem",
     args: ["ci", "-f", "config/testem-single-spec.json"]
-  , (error, stdout, code) ->
+  , (error, result, code) ->
     callback.call jasmine.getEnv().currentSpec,
       error: error
-      output: stdout.toString()
+      stdout: result.stdout
+      stderr: result.stderr
       code: code
     done?()
 
-root.WhenIRunTheSpec = ->
-  When (done) ->
-    runSpec done, (result) ->
-      @result = result
