@@ -1,0 +1,20 @@
+{
+  "name": "<%= pkg.name %>",
+  "version": "<%= pkg.version %>",
+  "main": "<%= files.js.uncompressedDist %>",
+  "ignore": [
+    "app",
+    "config",
+    "spec",
+    "spec-e2e",
+    "tasks",
+    ".travis.yml",
+    "Gruntfile.js",
+    "main.js",
+    "package.json"
+  ],
+  "dependencies": {
+  },
+  "devDependencies": {
+  }
+}
