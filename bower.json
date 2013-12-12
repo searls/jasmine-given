@@ -1,0 +1,18 @@
+{
+  "name": "jasmine-given",
+  "version": "2.5.1",
+  "main": "dist/jasmine-given.js",
+  "ignore": [
+    "app",
+    "config",
+    "spec",
+    "spec-e2e",
+    "tasks",
+    ".travis.yml",
+    "Gruntfile.js",
+    "main.js",
+    "package.json"
+  ],
+  "dependencies": {},
+  "devDependencies": {}
+}
