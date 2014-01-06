@@ -140,7 +140,7 @@ Take this example from jasmine-given's spec:
 
 ``` coffeescript
 describe "eliminating redundant test execution", ->
-  context "a traditional spec with numerous Then statements", ->
+  describe "a traditional spec with numerous Then statements", ->
     timesGivenWasInvoked = timesWhenWasInvoked = 0
     Given -> timesGivenWasInvoked++
     When -> timesWhenWasInvoked++
@@ -154,7 +154,7 @@ Because there are four `Then` statements, the `Given` and `When` are each execut
 However, spec authors can leverage idempotence safely when writing in a given-when-then format. You opt-in with jasmine-given by using `And` blocks, as shown below:
 
 ``` coffeescript
-  context "chaining Then statements", ->
+  describe "chaining Then statements", ->
     timesGivenWasInvoked = timesWhenWasInvoked = 0
     Given -> timesGivenWasInvoked++
     When -> timesWhenWasInvoked++
@@ -176,7 +176,7 @@ The above spec can also be expressed in JavaScript:
 ``` javascript
 
 describe("eliminating redundant test execution", function() {
-  context("a traditional spec with numerous Then statements", function() {
+  describe("a traditional spec with numerous Then statements", function() {
     var timesGivenWasInvoked = 0,
         timesWhenWasInvoked = 0;
     Given(function() { timesGivenWasInvoked++; });
@@ -187,7 +187,7 @@ describe("eliminating redundant test execution", function() {
     Then(function() { return timesWhenWasInvoked == 4; });
   });
 
-  context("chaining Then statements", function() {
+  describe("chaining Then statements", function() {
     var timesGivenWasInvoked = 0,
         timesWhenWasInvoked = 0;
     Given(function() { timesGivenWasInvoked++; });
