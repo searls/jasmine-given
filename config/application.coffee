@@ -20,6 +20,8 @@ module.exports = (lineman) ->
   _ = grunt.util._
   app = lineman.config.application
 
+  app.loadNpmTasks.push("grunt-jasmine-bundle")
+
   if libConfig.generateBowerJson
     app.loadNpmTasks.push("grunt-write-bower-json")
     app.appendTasks.dist.push("writeBowerJson")
@@ -35,8 +37,6 @@ module.exports = (lineman) ->
              */
 
             """
-
-  loadNpmTasks: ["grunt-jasmine-bundle"]
 
   hooks:
     loadNpmTasks:
