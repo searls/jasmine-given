@@ -13,7 +13,7 @@
     "minijasminenode": "~0.2.4"
   },
   "devDependencies": {
-    "lineman": ">=0.18.0",
+    "lineman": ">=0.23.1",
     "grunt": "~0.4.2",
     "grunt-jasmine-bundle": "0.1.4",
     "testem": "~0.6.2",
