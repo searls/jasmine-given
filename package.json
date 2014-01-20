@@ -17,7 +17,8 @@
     "grunt": "~0.4.2",
     "grunt-jasmine-bundle": "0.1.4",
     "testem": "~0.6.2",
-    "grunt-write-bower-json": "0.0.1"
+    "grunt-write-bower-json": "0.0.1",
+    "grunt-contrib-concat": "~0.3.0"
   },
   "keywords": [
     "jasmine",
