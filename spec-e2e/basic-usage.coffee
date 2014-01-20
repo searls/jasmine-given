@@ -1,9 +1,85 @@
 grunt = require("grunt")
+_ = require('grunt').util._
+
+passing = context "passing", ->
+  invariants.passingSpec()
+
+failing = context "failing", ->
+
+strip = (s) ->
+  _(s.split("\n")).map (line) ->
+    line.trim()
+  .join("\n")
 
 describe "Basic Given-When-Then usage", ->
 
   When (done) -> runSpec done, (result) ->
     @result = result
+
+  describe "failing tests", ->
+    invariants.failingSpecs(1)
+    describe "GWT", ->
+      describe "failure in an And", ->
+        Given -> createSpec """
+          describe 'foo', ->
+            Given -> @foo = 1
+            When -> @foo++
+            Then -> @foo == 2
+            And -> @foo != 2
+        """
+        Then -> expect(@result.stdout).toMatch(/not ok.*- foo then this.foo === 2/)
+        And -> expect(strip(@result.stdout)).toContain """
+            Then clause #2 `this.foo !== 2` failed by returning false
+
+            This comparison was detected:
+            this.foo !== 2
+            2 !== 2
+            """
+
+      describe "comparison failures", ->
+        describe "===", ->
+          Given -> createSpec """
+            describe 'foo', ->
+              Given -> @foo = 2
+              When -> @foo--
+              Then -> @foo == 2
+          """
+          Then -> expect(strip(@result.stdout)).toContain """
+            Then clause `this.foo === 2` failed by returning false
+
+            This comparison was detected:
+            this.foo === 2
+            1 === 2
+            """
+        describe "!==", ->
+          Given -> createSpec """
+            describe 'foo', ->
+              Given -> @foo = 1
+              When -> @foo++
+              Then -> @foo != 2
+          """
+          Then -> expect(strip(@result.stdout)).toContain """
+            Then clause `this.foo !== 2` failed by returning false
+
+            This comparison was detected:
+            this.foo !== 2
+            2 !== 2
+            """
+
+        describe ">=", ->
+          Given -> createSpec """
+            describe 'foo', ->
+              Given -> @foo = 0
+              When -> @foo++
+              Then -> @foo >= 2
+          """
+          Then -> expect(strip(@result.stdout)).toContain """
+            Then clause `this.foo >= 2` failed by returning false
+
+            This comparison was detected:
+            this.foo >= 2
+            1 >= 2
+            """
 
   describe "passing tests", ->
     invariants.passingSpec()
@@ -49,6 +125,7 @@ describe "Basic Given-When-Then usage", ->
     describe "Invariants", ->
       Given -> createSpec """
         describe '', ->
+          # This is a bad example of how you'd use Invariants, but I needed a side effect
           Invariant -> @foo ||= 0
           Invariant -> @foo++
 
@@ -70,4 +147,3 @@ describe "Basic Given-When-Then usage", ->
       """
       Then -> expect(@result.stdout).toContain("foo then bar")
       And -> expect(@result.stdout).toContain("foo then baz")
-

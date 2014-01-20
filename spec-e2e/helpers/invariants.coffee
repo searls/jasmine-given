@@ -9,3 +9,9 @@ root.invariants =
 
       # ok
     """
+
+  failingSpecs: (numberOfFailures = 1) ->
+    Invariant -> @result.code != 0
+    Invariant -> expect(@result.stdout).toContain """
+      # fail  #{numberOfFailures}
+    """
