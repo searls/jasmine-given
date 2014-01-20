@@ -27,12 +27,13 @@ describe "jasmine-given implementation", ->
 
   describe "support for jasmine-only style `Then.only` blocks", ->
     Given -> @expectationFunction = jasmine.createSpy('my expectation')
+    Given -> it.only ||= ->
     Given -> spyOn(it, 'only')
     When -> Then.only(@expectationFunction)
-    Then -> expect(it.only).toHaveBeenCalledWith jasmine.any(String), jasmine.argThat (arg) =>
-      arg()
+    Then -> expect(it.only.calls[0].args[0]).toEqual(jasmine.any(String))
+    And ->
+      it.only.calls[0].args[1].call()
       @expectationFunction.calls.length == 1
-
 
   describe "support for async done() style blocks", ->
     describe "Then blocks", ->
@@ -50,9 +51,9 @@ describe "jasmine-given implementation", ->
       describe "Then", ->
         beforeEach ->
           Then (done) ->
-        it '', -> expect(it).toHaveBeenCalledWith jasmine.any(String), jasmine.argThat (func) =>
-          func.length == 1
-
+        it '', ->
+          expect(it.calls[0].args[0]).toEqual(jasmine.any(String))
+          expect(it.calls[0].args[1].length).toEqual(1)
 
       describe "When", ->
         beforeEach ->
@@ -111,16 +112,11 @@ describe "jasmine-given implementation", ->
 
       context "no-arg", ->
         When -> Given ->
-        Then -> expect(beforeEach).toHaveBeenCalledWith jasmine.argThat (func) =>
-          func.length == 0
+        Then -> beforeEach.calls[0].args[0].length == 0
 
       context "done-ful", ->
         When -> Given (done) ->
-        Then -> expect(beforeEach).toHaveBeenCalledWith jasmine.argThat (func) =>
-          func.length == 1
-
-
-
+        Then -> beforeEach.calls[0].args[0].length == 1
 
   describe "matchers", ->
     Given -> @subject = jasmine._given.matchers
