@@ -2,9 +2,11 @@
 
   mostRecentlyUsed = null
 
-  beforeEach ->
-    @addMatchers(jasmine._given.matchers)
   root = @
+
+  currentSpec = null
+  beforeEach ->
+    currentSpec = this
 
   root.Given = ->
     mostRecentlyUsed = root.Given
@@ -34,7 +36,7 @@
     setupFunction = o(thing).firstThat (arg) -> o(arg).isFunction()
     assignResultTo = o(thing).firstThat (arg) -> o(arg).isString()
     doneWrapperFor setupFunction, (done) ->
-      context = jasmine.getEnv().currentSpec
+      context = currentSpec
       result = setupFunction.call(context, done)
       if assignResultTo
         unless context[assignResultTo]
@@ -60,7 +62,7 @@
     for expectation, i in expectations
       do (expectation, i) ->
         doneWrapperFor expectation, (maybeDone) ->
-          expect(expectation).not.toHaveReturnedFalseFromThen(jasmine.getEnv().currentSpec, i + 1, maybeDone)
+          expect(expectation).not.toHaveReturnedFalseFromThen(currentSpec, i + 1, maybeDone)
 
   doneWrapperFor = (func, toWrap) ->
     if func.length == 0
@@ -160,12 +162,16 @@
 
   evalInContextOfSpec = (operand) ->
     try
-      (-> eval(operand)).call(jasmine.getEnv().currentSpec)
+      (-> eval(operand)).call(currentSpec)
     catch e
       "<Error: \"#{e?.message?() || e}\">"
 
   attemptedEquality = (left, right, comparator) ->
-    (comparator == "==" || comparator == "===") && jasmine.getEnv().equals_(left, right)
+    return false unless comparator is "==" || comparator is "==="
+    if jasmine.matchersUtil?.equals?
+      jasmine.matchersUtil.equals(left, right)
+    else
+      jasmine.getEnv().equals_(left, right)
 
   deepEqualsNotice = (left, right) ->
     """
@@ -202,7 +208,10 @@
         func()
         @flow()
 
-
-
+  beforeEach ->
+    if jasmine.addMatchers?
+      jasmine.addMatchers(jasmine.matcherWrapper.wrap(jasmine._given.matchers))
+    else
+      @addMatchers(jasmine._given.matchers)
 
 ) jasmine
