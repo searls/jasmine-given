@@ -17,7 +17,7 @@
     "lineman-lib": "~ 0.0.1",
     "grunt": "~0.4.2",
     "grunt-jasmine-bundle": "0.1.4",
-    "testem": "~0.6.2"
+    "testem": "~0.6.3"
   },
   "keywords": [
     "jasmine",
