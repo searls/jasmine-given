@@ -4,6 +4,10 @@
 
   root = @
 
+  currentSpec = null
+  beforeEach ->
+    currentSpec = this
+
   root.Given = ->
     mostRecentlyUsed = root.Given
     beforeEach getBlock(arguments)
@@ -32,7 +36,7 @@
     setupFunction = o(thing).firstThat (arg) -> o(arg).isFunction()
     assignResultTo = o(thing).firstThat (arg) -> o(arg).isString()
     doneWrapperFor setupFunction, (done) ->
-      context = jasmine.getEnv().currentSpec
+      context = currentSpec
       result = setupFunction.call(context, done)
       if assignResultTo
         unless context[assignResultTo]
@@ -58,7 +62,7 @@
     for expectation, i in expectations
       do (expectation, i) ->
         doneWrapperFor expectation, (maybeDone) ->
-          expect(expectation).not.toHaveReturnedFalseFromThen(jasmine.getEnv().currentSpec, i + 1, maybeDone)
+          expect(expectation).not.toHaveReturnedFalseFromThen(currentSpec, i + 1, maybeDone)
 
   doneWrapperFor = (func, toWrap) ->
     if func.length == 0
@@ -158,7 +162,7 @@
 
   evalInContextOfSpec = (operand) ->
     try
-      (-> eval(operand)).call(jasmine.getEnv().currentSpec)
+      (-> eval(operand)).call(currentSpec)
     catch e
       "<Error: \"#{e?.message?() || e}\">"
 
