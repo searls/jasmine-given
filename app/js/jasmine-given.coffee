@@ -208,11 +208,10 @@
         func()
         @flow()
 
-  if jasmine.addMatchers?
-    jasmine.addMatchers(jasmine.matcherWrapper.wrap(jasmine._given.matchers))
-  else
-    beforeEach ->
+  beforeEach ->
+    if jasmine.addMatchers?
+      jasmine.addMatchers(jasmine.matcherWrapper.wrap(jasmine._given.matchers))
+    else
       @addMatchers(jasmine._given.matchers)
-
 
 ) jasmine
