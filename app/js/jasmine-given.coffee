@@ -163,8 +163,11 @@
       "<Error: \"#{e?.message?() || e}\">"
 
   attemptedEquality = (left, right, comparator) ->
-    equalityTester = jasmine.getEnv().equals_ || jasmine.matchersUtil.equals
-    (comparator == "==" || comparator == "===") && equalityTester(left, right)
+    return false unless comparator is "==" || comparator is "==="
+    if jasmine.matchersUtil?.equals?
+      jasmine.matchersUtil.equals(left, right)
+    else
+      jasmine.getEnv().equals_(left, right)
 
   deepEqualsNotice = (left, right) ->
     """
