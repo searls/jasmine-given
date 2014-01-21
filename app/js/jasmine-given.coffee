@@ -2,8 +2,6 @@
 
   mostRecentlyUsed = null
 
-  beforeEach ->
-    @addMatchers(jasmine._given.matchers)
   root = @
 
   root.Given = ->
@@ -165,7 +163,8 @@
       "<Error: \"#{e?.message?() || e}\">"
 
   attemptedEquality = (left, right, comparator) ->
-    (comparator == "==" || comparator == "===") && jasmine.getEnv().equals_(left, right)
+    equalityTester = jasmine.getEnv().equals_ || jasmine.matchersUtil.equals
+    (comparator == "==" || comparator == "===") && equalityTester(left, right)
 
   deepEqualsNotice = (left, right) ->
     """
@@ -202,7 +201,11 @@
         func()
         @flow()
 
-
+  if jasmine.addMatchers?
+    jasmine.addMatchers(jasmine.matcherWrapper.wrap(jasmine._given.matchers))
+  else
+    beforeEach ->
+      @addMatchers(jasmine._given.matchers)
 
 
 ) jasmine
