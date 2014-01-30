@@ -13,7 +13,7 @@ Keep in mind that the former will be a **breaking change** for many test suites 
 
 jasmine-given is a [Jasmine](https://github.com/pivotal/jasmine) helper that encourages leaner, meaner specs using `Given`, `When`, and `Then`. It is a shameless tribute to Jim Weirich's terrific [rspec-given](https://github.com/jimweirich/rspec-given) gem.
 
-**[Download the latest version here](https://github.com/searls/jasmine-given/releases/2.1.0/1131/jasmine-given.js)**.
+**[Download the latest version here](https://github.com/searls/jasmine-given/releases)**.
 
 The basic idea behind the "*-given" meme is a humble acknowledgement of given-when-then as the best English language analogue we have to arrange-act-assert. With rspec and jasmine, we often approximate "given-when-then" with "let-beforeEach-it" (noting that jasmine lacks `let`).
 
