@@ -7,8 +7,3 @@
 #
 
 module.exports = (lineman) ->
-  grunt = lineman.grunt
-
-  js:
-    uncompressedDist: "dist/#{grunt.file.readJSON('package.json').name}.js"
-
