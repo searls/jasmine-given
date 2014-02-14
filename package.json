@@ -11,7 +11,7 @@
   "dependencies": {
     "coffee-script": "~ 1.6.3",
     "minijasminenode": "~0.2.4",
-    "jasmine-matcher-wrapper": "~ 0.0.2"
+    "jasmine-matcher-wrapper": "~ 0.0.3"
   },
   "devDependencies": {
     "lineman": ">=0.23.1",
