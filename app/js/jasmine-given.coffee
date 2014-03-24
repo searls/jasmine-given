@@ -181,7 +181,7 @@
 
   class Waterfall
     constructor: (functions = [], finalCallback) ->
-      @functions = functions.slice(0)
+      @functions = cloneArray(functions)
       @finalCallback = finalCallback
 
       @asyncCount = 0
@@ -207,6 +207,8 @@
       else
         func()
         @flow()
+
+  cloneArray = (a) -> a.slice(0)
 
   beforeEach ->
     if jasmine.addMatchers?
