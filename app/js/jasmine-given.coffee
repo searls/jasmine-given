@@ -45,24 +45,26 @@
           throw new Error("Unfortunately, the variable '#{assignResultTo}' is already assigned to: #{context[assignResultTo]}")
 
   mostRecentExpectations = null
+  mostRecentStacks = null
 
   declareJasmineSpec = (specArgs, itFunction = it) ->
     label = o(specArgs).firstThat (arg) -> o(arg).isString()
     expectationFunction = o(specArgs).firstThat (arg) -> o(arg).isFunction()
     mostRecentlyUsed = root.subsequentThen
     mostRecentExpectations = expectations = [expectationFunction]
+    mostRecentStacks = stacks = [errorWithRemovedLines("failed expectation", 3)]
 
     itFunction "then #{label ? stringifyExpectation(expectations)}", (jasmineDone) ->
-      userCommands = [].concat(whenList, invariantList, wrapAsExpectations(expectations))
+      userCommands = [].concat(whenList, invariantList, wrapAsExpectations(expectations, stacks))
       new Waterfall(userCommands, jasmineDone).flow()
 
     return { Then: subsequentThen,  And: subsequentThen }
 
-  wrapAsExpectations = (expectations) ->
+  wrapAsExpectations = (expectations, stacks) ->
     for expectation, i in expectations
       do (expectation, i) ->
         doneWrapperFor expectation, (maybeDone) ->
-          expect(expectation).not.toHaveReturnedFalseFromThen(currentSpec, i + 1, maybeDone)
+          expect(expectation).not.toHaveReturnedFalseFromThen(currentSpec, i + 1, stacks[i], maybeDone)
 
   doneWrapperFor = (func, toWrap) ->
     if func.length == 0
@@ -79,7 +81,13 @@
 
   root.subsequentThen = (additionalExpectation) ->
     mostRecentExpectations.push additionalExpectation
+    mostRecentStacks.push(errorWithRemovedLines("failed expectation", 3))
     this
+
+  errorWithRemovedLines = (msg, n) ->
+    if stack = new Error(msg).stack
+      [error, lines...] = stack.split("\n")
+      "#{error}\n#{lines.slice(n).join("\n")}"
 
   mostRecentlyUsed = root.Given
   root.And = ->
@@ -101,7 +109,7 @@
 
   jasmine._given =
     matchers:
-      toHaveReturnedFalseFromThen: (context, n, done) ->
+      toHaveReturnedFalseFromThen: (context, n, stackTrace, done) ->
         result = false
         exception = undefined
         try
@@ -116,7 +124,7 @@
           else
             msg += "returning false"
           msg += additionalInsightsForErrorMessage(stringyExpectation)
-
+          msg += "\n\n" + stackTrace if stackTrace?
           msg
 
         result == false

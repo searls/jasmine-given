@@ -35,6 +35,8 @@ describe "Basic Given-When-Then usage", ->
             this.foo !== 2
             2 !== 2
             """
+        # Won't pass under Phantom, b/c Phantom doesn't provide Error.stack
+        # And -> expect(strip(@result.stdout)).toContain("example-spec.js")
 
       describe "comparison failures", ->
         describe "===", ->
@@ -51,6 +53,7 @@ describe "Basic Given-When-Then usage", ->
             this.foo === 2
             1 === 2
             """
+
         describe "!==", ->
           Given -> createSpec """
             describe 'foo', ->
