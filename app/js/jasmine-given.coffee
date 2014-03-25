@@ -107,6 +107,37 @@
         i++
       return undefined
 
+  class Waterfall
+    constructor: (functions = [], finalCallback) ->
+      @functions = cloneArray(functions)
+      @finalCallback = finalCallback
+
+      @asyncCount = 0
+      for func in @functions
+        @asyncCount += 1 if func.length > 0
+
+    asyncTaskCompleted: =>
+      @asyncCount -= 1
+      @flow()
+
+    invokeFinalCallbackIfNecessary: =>
+      if @asyncCount == 0
+        @finalCallback?()
+        @finalCallback = undefined
+
+    flow: =>
+      return @invokeFinalCallbackIfNecessary() if @functions.length == 0
+
+      func = @functions.shift()
+
+      if func.length > 0
+        func(@asyncTaskCompleted)
+      else
+        func()
+        @flow()
+
+  cloneArray = (a) -> a.slice(0)
+
   jasmine._given =
     matchers:
       toHaveReturnedFalseFromThen: (context, n, stackTrace, done) ->
@@ -128,6 +159,7 @@
           msg
 
         result == false
+    __Waterfall__: Waterfall
 
   stringifyExpectation = (expectation) ->
     matches = expectation.toString().replace(/\n/g,'').match(/function\s?\(.*\)\s?{\s*(return\s+)?(.*?)(;)?\s*}/i)
@@ -186,37 +218,6 @@
     However, these items are deeply equal! Try an expectation like this instead:
       expect(#{left}).toEqual(#{right})
     """
-
-  class Waterfall
-    constructor: (functions = [], finalCallback) ->
-      @functions = cloneArray(functions)
-      @finalCallback = finalCallback
-
-      @asyncCount = 0
-      for func in @functions
-        @asyncCount += 1 if func.length > 0
-
-    asyncTaskCompleted: =>
-      @asyncCount -= 1
-      @flow()
-
-    invokeFinalCallbackIfNecessary: =>
-      if @asyncCount == 0
-        @finalCallback?()
-        @finalCallback = undefined
-
-    flow: =>
-      return @invokeFinalCallbackIfNecessary() if @functions.length == 0
-
-      func = @functions.shift()
-
-      if func.length > 0
-        func(@asyncTaskCompleted)
-      else
-        func()
-        @flow()
-
-  cloneArray = (a) -> a.slice(0)
 
   beforeEach ->
     if jasmine.addMatchers?
