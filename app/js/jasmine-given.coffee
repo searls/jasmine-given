@@ -107,31 +107,58 @@
         i++
       return undefined
 
+  class Frame
+    "use strict"
+    constructor: (@closure) ->
+
+    execute: -> @closure()
+
+    isStacked: true
+
+  trampoline = (fn) ->
+    "use strict"
+    trampolined = ()->
+      args = Array.prototype.slice.call(arguments)
+      result = fn.apply(this, args)
+
+      while result?.isStacked
+        result = result.execute()
+
+      return result
+
+    trampolined.originalFn = fn
+    return trampolined
+
+  tailCall = (fn) ->
+    "use strict"
+    args = Array.prototype.slice.call(arguments, 1)
+    self = this
+    if fn.originalFn instanceof Function
+      return new Frame(->
+        fn.originalFn.apply(self, args)
+      )
+    else
+      return new Frame(->
+        fn.apply(self, args)
+      )
+
   class Waterfall
+    "use strict"
     constructor: (functions = [], finalCallback) ->
       @functions = cloneArray(functions)
       @finalCallback = finalCallback
 
-      @asyncCount = 0
-      for func in @functions
-        @asyncCount += 1 if func.length > 0
-
-    asyncTaskCompleted: =>
-      @asyncCount -= 1
-      @flow()
-
     invokeFinalCallbackIfNecessary: =>
-      if @asyncCount == 0
-        @finalCallback?()
-        @finalCallback = undefined
+      @finalCallback?()
+      @finalCallback = undefined
 
-    flow: =>
+    flow: ->
       return @invokeFinalCallbackIfNecessary() if @functions.length == 0
 
       func = @functions.shift()
 
       if func.length > 0
-        func(@asyncTaskCompleted)
+        func(=> @flow() )
       else
         func()
         @flow()

@@ -38,18 +38,20 @@ describe "Waterfall", ->
           counter++
           asyncCounter++
           done()
-        , 5
+        , 9
 
     Given -> @finalFn = -> counterDuringFinal = counter
     Given ->
       @functions = packFunctions(100, -> counter++).
+        concat(packFunctions(5, @asyncFn)).
         concat(packFunctions(100, -> counter++)).
-        concat(packFunctions(10, @asyncFn))
+        concat(packFunctions(5, @asyncFn))
 
     When -> new Waterfall(@functions, @finalFn).flow()
     Then ->
       waitsFor ->
         asyncCounter == 10
+      , "10 async functions", 100
       runs ->
         expect(counter).toBe(210)
     And ->
