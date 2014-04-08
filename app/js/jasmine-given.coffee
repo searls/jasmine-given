@@ -110,11 +110,13 @@
   class Waterfall
     constructor: (functions = [], @finalCallback = ->) ->
       @functions = cloneArray(functions)
+      @finalCallbackNeeded = false
 
     flow: ->
-      return @finalCallback() if @functions.length == 0
+      return (if @finalCallbackNeeded then @finalCallback() else null) if @functions.length == 0
       func = @functions.shift()
       if func.length > 0
+        @finalCallbackNeeded = true
         func(=> @flow() )
       else
         func()
