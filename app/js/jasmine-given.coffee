@@ -54,7 +54,7 @@
     mostRecentExpectations = expectations = [expectationFunction]
     mostRecentStacks = stacks = [errorWithRemovedLines("failed expectation", 3)]
 
-    itFunction "then #{label ? stringifyExpectation(expectations)}", (jasmineDone) ->
+    itFunction "then #{label ? stringifyExpectation(expectations)}", doneWrapperFor expectationFunction, (jasmineDone) ->
       userCommands = [].concat(whenList, invariantList, wrapAsExpectations(expectations, stacks))
       new Waterfall(userCommands, jasmineDone).flow()
 
@@ -110,13 +110,11 @@
   class Waterfall
     constructor: (functions = [], @finalCallback = ->) ->
       @functions = cloneArray(functions)
-      @finalCallbackNeeded = false
 
     flow: ->
-      return (if @finalCallbackNeeded then @finalCallback() else null) if @functions.length == 0
+      return @finalCallback() if @functions.length == 0
       func = @functions.shift()
       if func.length > 0
-        @finalCallbackNeeded = true
         func(=> @flow() )
       else
         func()

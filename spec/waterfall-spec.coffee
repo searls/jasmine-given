@@ -19,13 +19,13 @@ describe "Waterfall", ->
     When -> new Waterfall(packFunctions(128000, -> counter++), ->).flow()
     Then -> expect(counter).toBe(128000)
 
-  context "final fn does not run for sync functions", ->
+  context "final fn runs last", ->
     counter = null
     countDuringFinal = null
     Given -> counter = 0
     Given -> @finalFn = -> countDuringFinal = 100
     When -> new Waterfall(packFunctions(100, -> counter++), @finalFn).flow()
-    Then -> expect(countDuringFinal).toBeNull()
+    Then -> expect(countDuringFinal).toBe(counter)
 
   context "with async functions", ->
     counter = null
