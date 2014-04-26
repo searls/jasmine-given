@@ -26,6 +26,10 @@ module.exports = (lineman) ->
         "grunt-jasmine-bundle": ->
           grunt.renameTask("spec", "nodeSpec")
 
+  plugins:
+    lib:
+      includeVendorInDistribution: true
+
   nodeSpec:
     e2e:
       options:
@@ -33,4 +37,3 @@ module.exports = (lineman) ->
           showColors: true
         helpers: "spec-e2e/helpers/**/*.{js,coffee}"
         specs: ["spec-e2e/**/*.{js,coffee}", "!spec-e2e/tmp/**"]
-
