@@ -62,7 +62,7 @@ describe "jasmine-given implementation", ->
         context "the when does not call its done()", ->
           beforeEach ->
             When (done) ->
-            Then(@then)
+            Then (done) -> @then(); done()
           it '', ->
             specImplementation = it.calls[0].args[1]
             doneProvidedByJasmineRunner = jasmine.createSpy("done")
@@ -73,7 +73,7 @@ describe "jasmine-given implementation", ->
         context "the when does indeed call its done()", ->
           beforeEach ->
             When (done) -> done()
-            Then(@then)
+            Then (done) -> @then(); done()
           it '', ->
             specImplementation = it.calls[0].args[1]
             doneProvidedByJasmineRunner = jasmine.createSpy("done")
@@ -93,7 +93,7 @@ describe "jasmine-given implementation", ->
             Invariant -> inc()
             When (done) -> inc(done)
             And -> inc()
-            Then -> inc()
+            Then (done) -> inc(done)
             And -> inc()
             And (done) -> inc(done)
             And -> inc()

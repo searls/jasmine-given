@@ -54,7 +54,7 @@
     mostRecentExpectations = expectations = [expectationFunction]
     mostRecentStacks = stacks = [errorWithRemovedLines("failed expectation", 3)]
 
-    itFunction "then #{label ? stringifyExpectation(expectations)}", (jasmineDone) ->
+    itFunction "then #{label ? stringifyExpectation(expectations)}", doneWrapperFor expectationFunction, (jasmineDone) ->
       userCommands = [].concat(whenList, invariantList, wrapAsExpectations(expectations, stacks))
       new Waterfall(userCommands, jasmineDone).flow()
 

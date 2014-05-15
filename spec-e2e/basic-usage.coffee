@@ -109,6 +109,14 @@ describe "Basic Given-When-Then usage", ->
       Then -> expect(@result.stdout).toContain("then this.things.length === 2")
       And -> expect(@result.stdout).toContain("# tests 1")
 
+    describe "async And following sync Then", ->
+      Given -> createSpec """
+        describe '', ->
+          Then ->
+          And (done) -> setTimeout((-> expect(0).toEqual(1); done()), 0)
+      """
+      Then "never completes", -> expect(@result.stdout).toContain("# fail  0")
+
     describe "Givens before Whens", ->
       Given -> createSpec """
         describe '', ->
