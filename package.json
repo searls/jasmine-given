@@ -14,8 +14,8 @@
     "jasmine-matcher-wrapper": "~ 0.0.3"
   },
   "devDependencies": {
-    "lineman": ">=0.29.3",
-    "lineman-lib": "~0.1.0",
+    "lineman": ">=0.31.0",
+    "lineman-lib": "~0.2.0",
     "grunt": "~0.4.2",
     "grunt-jasmine-bundle": "0.1.4",
     "testem": "~0.6.15"
