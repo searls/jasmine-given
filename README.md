@@ -223,7 +223,7 @@ Rspec-given also introduced the notion of "Invariants".  An `Invariant` lets you
            Then -> @stack.depth == 0
 
     describe "With no contents", ->
-      Then -> @stack.depth == 2
+      Then -> @stack.depth == 0
 
     …etc…
 
