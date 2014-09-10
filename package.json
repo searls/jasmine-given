@@ -31,10 +31,5 @@
     "type": "git",
     "url": "https://github.com/searls/jasmine-given.git"
   },
-  "licenses": [
-    {
-      "name": "Apache License 2.0",
-      "url": "http://www.apache.org/licenses/LICENSE-2.0"
-    }
-  ]
+  "license": "MIT"
 }
