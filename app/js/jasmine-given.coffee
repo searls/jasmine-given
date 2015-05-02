@@ -2,7 +2,7 @@
 
   mostRecentlyUsed = null
 
-  root = @
+  root = `(1, eval)('this')`
 
   currentSpec = null
   beforeEach ->
