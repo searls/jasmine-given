@@ -1,4 +1,4 @@
-/* jasmine-given - 2.6.2
+/* jasmine-given - 2.6.3
  * Adds a Given-When-Then DSL to jasmine as an alternative style for specs
  * https://github.com/searls/jasmine-given
  */
@@ -72,7 +72,7 @@
   (function(jasmine) {
     var Waterfall, additionalInsightsForErrorMessage, apparentReferenceError, attemptedEquality, cloneArray, comparisonInsight, currentSpec, declareJasmineSpec, deepEqualsNotice, doneWrapperFor, errorWithRemovedLines, evalInContextOfSpec, finalStatementFrom, getBlock, invariantList, mostRecentExpectations, mostRecentStacks, mostRecentlyUsed, o, root, stringifyExpectation, wasComparison, whenList, wrapAsExpectations;
     mostRecentlyUsed = null;
-    root = this;
+    root = (1, eval)('this');
     currentSpec = null;
     beforeEach(function() {
       return currentSpec = this;
