@@ -277,12 +277,12 @@ Or, perhaps you are using a collection of `Then` and `And` statements to express
 Following Jasmine 2.0's style for testing asynchronous code, the `Given` and `When` statements' functions can take a `done` parameter, which is a function to call when the asynchronous code completes.  Subsequent statements won't be executed until the `done` completes.  E.g.
 
         Given (done) -> $.get "/stuff"
-                          .success (data) ->
+                          .success (data) =>
                             @stuff = data
                             done()
                             
         When (done) -> $.post "/do", stuff: @stuff
-                         .success (data) ->
+                         .success (data) =>
                             @yay = true
                             done()
                             
