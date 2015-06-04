@@ -272,6 +272,23 @@ Or, perhaps you are using a collection of `Then` and `And` statements to express
         And -> @ajax_spy.mostRecentCall.args[0].data.item.user_id == userID
         And -> @ajax_spy.mostRecentCall.args[0].data.item.name == itemName
 
+# Testing Asynchronous Code
+
+Following Jasmine 2.0's style for testing asynchronous code, the `Given` and `When` statements' functions can take a `done` parameter, which is a function to call when the asynchronous code completes.  Subsequent statements won't be executed until the `done` completes.  E.g.
+
+        Given (done) -> $.get "/stuff"
+                          .success (data) ->
+                            @stuff = data
+                            done()
+                            
+        When (done) -> $.post "/do", stuff: @stuff
+                         .success (data) ->
+                            @yay = true
+                            done()
+                            
+        Then -> @stuff == "the stuff"
+        Then -> @yay
+
 # Using with Node.js
 
 To use this helper with Jasmine under Node.js, simply add it to your package.json with
