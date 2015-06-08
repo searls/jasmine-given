@@ -289,6 +289,15 @@ Following Jasmine 2.0's style for testing asynchronous code, the `Given` and `Wh
         Then -> @stuff == "the stuff"
         Then -> @yay
 
+The `Then` and `And` statement functions can also take a `done` parameter, if the expectation itself requires asynchronous executation to evalute.  For example if you're using Selenium, you might want to check browser state in an expectation:
+  
+        Then (done) -> browser.find '.alert', (el) ->
+            expect(el).toBeDefined()
+            done()
+        And (done) -> browser.find '.cancel', (el) ->
+            expect(cancel).toBeDefined()
+            done
+
 # Using with Node.js
 
 To use this helper with Jasmine under Node.js, simply add it to your package.json with
