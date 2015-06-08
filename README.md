@@ -296,7 +296,7 @@ The `Then` and `And` statement functions can also take a `done` parameter, if th
             done()
         And (done) -> browser.find '.cancel', (el) ->
             expect(cancel).toBeDefined()
-            done
+            done()
 
 # Using with Node.js
 
