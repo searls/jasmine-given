@@ -1,4 +1,4 @@
-/* jasmine-given - 2.6.3
+/* jasmine-given - 2.6.4
  * Adds a Given-When-Then DSL to jasmine as an alternative style for specs
  * https://github.com/searls/jasmine-given
  */
@@ -142,11 +142,11 @@
       mostRecentlyUsed = root.subsequentThen;
       mostRecentExpectations = expectations = [expectationFunction];
       mostRecentStacks = stacks = [errorWithRemovedLines("failed expectation", 3)];
-      itFunction("then " + (label != null ? label : stringifyExpectation(expectations)), doneWrapperFor(expectationFunction, function(jasmineDone) {
+      itFunction("then " + (label != null ? label : stringifyExpectation(expectations)), function(jasmineDone) {
         var userCommands;
         userCommands = [].concat(whenList, invariantList, wrapAsExpectations(expectations, stacks));
         return new Waterfall(userCommands, jasmineDone).flow();
-      }));
+      });
       return {
         Then: subsequentThen,
         And: subsequentThen
