@@ -11,7 +11,7 @@
   "scripts": {
     "test": "lineman spec-ci",
     "preversion": "git pull --rebase && npm test",
-    "version": "lineman clean build && git add dist",
+    "version": "lineman clean build && git add dist && git add bower.json",
     "postversion": "git push && git push --tags && npm publish"
   },
   "dependencies": {
