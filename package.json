@@ -8,6 +8,12 @@
     "company": "Test Double, LLC"
   },
   "main": "main.js",
+  "scripts": {
+    "test": "lineman spec-ci",
+    "preversion": "git pull --rebase && npm test",
+    "version": "lineman clean build && git add dist",
+    "postversion": "git push && git push --tags && npm publish"
+  },
   "dependencies": {
     "coffee-script": "~ 1.6.3",
     "minijasminenode": "~0.2.4",
