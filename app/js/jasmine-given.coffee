@@ -39,10 +39,10 @@
       context = currentSpec
       result = setupFunction.call(context, done)
       if assignResultTo
-        unless context[assignResultTo]
-          context[assignResultTo] = result
-        else
+        if context[assignResultTo]
           throw new Error("Unfortunately, the variable '#{assignResultTo}' is already assigned to: #{context[assignResultTo]}")
+        else
+          context[assignResultTo] = result
 
   mostRecentExpectations = null
   mostRecentStacks = null

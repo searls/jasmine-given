@@ -70,6 +70,17 @@ describe "jasmine-given implementation", ->
             expect(@then).not.toHaveBeenCalled()
             expect(doneProvidedByJasmineRunner).not.toHaveBeenCalled()
 
+        context "the when calls its done() with an error", ->
+          beforeEach ->
+            When (done) -> done(new Error())
+            Then (done) -> @then(); done()
+          it '', ->
+            specImplementation = it.calls[0].args[1]
+            doneProvidedByJasmineRunner = jasmine.createSpy("done")
+            specImplementation(doneProvidedByJasmineRunner)
+            expect(@then).not.toHaveBeenCalled()
+            expect(doneProvidedByJasmineRunner).toHaveBeenCalled()
+
         context "the when does indeed call its done()", ->
           beforeEach ->
             When (done) -> done()
